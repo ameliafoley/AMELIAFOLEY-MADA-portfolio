@@ -6,5 +6,22 @@ output:
 ---
 
 
+# Hi, I'm Amelia! 
+
+## My Background & Training
+
+### Statistics, Programming, & Data Analysis Experience
+
+## Research Interests
+
+## What I hope to learn in this course
+
+
+
 Add some text and a figure describing myself.
 
+Talk a bit about yourself, your background, training, research interests. Let me/us know what kind of statistics, programming, data analysis experience you already have. I’d also be curious to know what you most hope to learn in this course. And then talk about (at least one) interesting personal fact(s) about you.
+Give your text a nice structure with headings, subheadings, etc.
+Include a picture of yourself. To do so, place the picture in the repository and link it from the Rmarkdown file.
+Finally, include a link to a picture/video/website/etc. The linked material should be somehow related to data analysis. Find something that you think is really cool/interesting/weird/etc. Provide a few explanatory sentences.
+If you want, feel free to get creative and include other things. You can play with RMarkdown if you wish to, e.g., you can try to include some table or a video or whatever.
