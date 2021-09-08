@@ -5,6 +5,107 @@ output:
     toc: FALSE
 ---
 
-This will contain the future R coding exercise.
+
+#Load packages, view data
+```{r}
+#load dslabs and tidyverse packages
+library("dslabs")
+library("tidyverse") 
+#look at gapminder help file
+help(gapminder)
+#get data structure overview
+str(gapminder)
+#get data summary
+summary(gapminder)
+#determine gapminder object type
+class(gapminder)
+```
+
+#Create new objects as subset of original dataset
+```{r}
+#Assign African countries to new object
+africadata <- gapminder %>% filter(continent=="Africa")
+#get data structure overview for africadata
+str(africadata)
+#get data summary
+summary(africadata)
+
+#make new variable containing infant_mortality and life_expectancy
+mort_life <- africadata %>% select(infant_mortality, life_expectancy)
+
+#make new variable containing population and life_expectancy
+pop_life <- africadata %>% select(population, life_expectancy)
+
+#view data structure for new variables
+str(mort_life)
+str(pop_life)
+
+#view data summaries for new variables
+summary(mort_life)
+summary(pop_life)
+```
+
+#Create plots of selected data
+```{r}
+#plot life expectancy vs infant mortality
+ggplot(mort_life, aes(infant_mortality, life_expectancy)) + geom_point()
+#In this plot we see a negative correlation between infant mortality and life expectancy
+#There were also 226 missing values exluded from this plot
+
+#plot life expectancy vs population (log scale)
+ggplot(pop_life, aes(population, life_expectancy)) + geom_point() +scale_x_log10()
+
+```
+In this plot, we see a positive correlation between population and life expectancy, in "streaks". Looking at the original dataset, africadata, shows that a wide span of yeares (1960 to 2016) is probably the source of the feature in the plot. Another note: there were 51 observations with missing values for this plot. 
+
+#Data cleaning
+```{r}
+#Let's select one year with a large amount of data to eliminate the limitations we saw above. 
+
+#Figure out which years have missing infant mortality data
+
+
+africadata[!complete.cases(africadata$infant_mortality),] #this line of code will show us the opposite of complete cases (meaning missing or NA cases) for the infant_mortality variable within our dataset
+#we can see that infant_mortality is missing from 1960 to 1981, and for the year 2016
+
+#We'll look at the year 2000 instead
+
+#extract observations for year 2000 only
+africadata_2000 <- africadata %>% filter(year==2000)
+
+#check data structure for new object
+str(africadata_2000)
+
+#check summary of data for new object
+summary(africadata_2000)
+```
+
+#Recreate plots
+```{r}
+#recreate above plots for year 2000 only
+#plot life expectancy vs infant mortality
+ggplot(africadata_2000, aes(infant_mortality, life_expectancy)) + geom_point()
+#we see a negative correlation between infant mortality and life expectancy in this plot
+
+#plot life expectancy vs population (log scale)
+ggplot(africadata_2000, aes(population, life_expectancy)) + geom_point() +scale_x_log10()
+#we don't see any obvious relationship between population and life expectancy in this plot
+```
+
+#Apply statistics to data
+```{r}
+#use a linear model to fit the data with infanct mortality as the predictor
+fit1 <- lm(life_expectancy ~ infant_mortality, data = africadata_2000)
+
+#use a linear model with population size as the predictor
+fit2 <- lm(life_expectancy ~ population, data = africadata_2000)
+
+#view summary of fit1 and fit2
+summary(fit1)
+summary(fit2)
+```
+
+Conclusion:
+The p-value for the linear model using infant mortality as the predictor is < 0.05, while the p-value for the linear model using population as the predictor is > 0.05. This suggests that infant mortality correlates significantly with life expectancy and is a better predictor of life expectancy than is population size. 
 
 
