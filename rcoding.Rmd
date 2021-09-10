@@ -11,6 +11,8 @@ output:
 #load dslabs and tidyverse packages
 library("dslabs")
 library("tidyverse") 
+library("broom")
+
 #look at gapminder help file
 help(gapminder)
 #get data structure overview
@@ -108,4 +110,50 @@ summary(fit2)
 Conclusion:
 The p-value for the linear model using infant mortality as the predictor is < 0.05, while the p-value for the linear model using population as the predictor is > 0.05. This suggests that infant mortality correlates significantly with life expectancy and is a better predictor of life expectancy than is population size. 
 
+#Subset data
+```{r}
+#Create subset of africadata with  infant mortality and fertility
+v1<- africadata %>% select("infant_mortality", "fertility")
 
+#Create subset of africadata with GPD and population
+v2<- africadata %>% select("gdp", "fertility")
+```
+
+#Visualization
+```{r}
+#Plot of infant mortality vs fertility
+ggplot(africadata, aes(infant_mortality, fertility)) + geom_point()
+#We noticed a positive correlation between infant mortality and fertility
+
+#Plot of infant GPD vs. population
+ggplot(africadata, aes(gdp, fertility)) + geom_point()
+#We noticed negative correlation between fertility and GPD
+```
+#Fit a lineal model 
+```{r}
+#Analyzed how infant mortality and GDP perform as predictor of fertility
+
+#Fertility Vs Infant mortality
+fit3<- lm(fertility ~ infant_mortality, data = africadata)
+
+#Fertility Vs. GDP
+fit4<- lm(fertility ~ gdp, data= africadata)
+
+#View the summary of fit3 and fit4
+summary(fit3)
+summary(fit4)
+```
+#According with the summaries, both fit3 and fit4 have p-values <0.05. Then, infant mortality and GDP could be good predictors of fertility.
+
+#Using broom package will convert the output from lm function into a table.(Library("broom") is at the begging of the code ;)
+
+#Tabular outputs with "broom"
+```{r}
+#View Fertility Vs Infant mortality
+tidy(fit3)
+
+#View Fertility Vs. GDP
+tidy(fit4)
+```
+
+#The outcomes are showing that there is relatinship between Fertility and Infant mortality as well as relationship between Fertility and GDP. In both cases the p-values were <0.05, indicanding that infant mortality and GDP may have a predictie relationship with fertility.
