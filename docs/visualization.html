@@ -44,6 +44,99 @@
     </style>
 
 
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -275,7 +368,228 @@ $(document).ready(function () {
 </div>
 
 
-<p>This will contain the future visualization exercise.</p>
+<div id="loading-required-packages" class="section level1">
+<h1>Loading required packages</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(usmap)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(knitr)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">library</span>(here)</span></code></pre></div>
+<pre><code>## here() starts at /Users/ameliafoley/Desktop/MADA/AMELIAFOLEY-MADA-portfolio</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">library</span>(scales)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;scales&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     discard</code></pre>
+<pre><code>## The following object is masked from &#39;package:readr&#39;:
+## 
+##     col_factor</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">library</span>(lubridate)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union</code></pre>
+<p>For this exercise, I’ll recreate a graphic from FiveThirtyEight which demonstrates how Scrabble scores increased following a rule change incorporating new words. The link to the original article can be found <a href="https://fivethirtyeight.com/features/how-qi-and-za-changed-scrabble/">here</a></p>
+</div>
+<div id="the-visual-i-want-to-recreate" class="section level1">
+<h1>The visual I want to recreate</h1>
+<p><img src="scrabblevis.png" width="50%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="loading-data" class="section level1">
+<h1>Loading data</h1>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>file &lt;-<span class="st"> &quot;https://media.githubusercontent.com/media/fivethirtyeight/data/master/scrabble-games/scrabble_games.csv&quot;</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>data &lt;-<span class="st"> </span><span class="kw">read.csv</span>(file, <span class="dt">header =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+</div>
+<div id="look-at-data" class="section level1">
+<h1>Look at data</h1>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>dplyr<span class="op">::</span><span class="kw">glimpse</span>(data)</span></code></pre></div>
+<pre><code>## Rows: 1,542,642
+## Columns: 19
+## $ gameid          &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,…
+## $ tourneyid       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+## $ tie             &lt;chr&gt; &quot;False&quot;, &quot;False&quot;, &quot;False&quot;, &quot;False&quot;, &quot;False&quot;, &quot;False&quot;, …
+## $ winnerid        &lt;int&gt; 268, 268, 268, 268, 268, 268, 268, 268, 429, 429, 429,…
+## $ winnername      &lt;chr&gt; &quot;Harriette Lakernick&quot;, &quot;Harriette Lakernick&quot;, &quot;Harriet…
+## $ winnerscore     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ winneroldrating &lt;int&gt; 1568, 1568, 1568, 1568, 1568, 1568, 1568, 1568, 1915, …
+## $ winnernewrating &lt;int&gt; 1684, 1684, 1684, 1684, 1684, 1684, 1684, 1684, 1872, …
+## $ winnerpos       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 5, 5, 5, 5, …
+## $ loserid         &lt;int&gt; 429, 435, 441, 456, 1334, 454, 5766, 442, 456, 1334, 4…
+## $ losername       &lt;chr&gt; &quot;Patricia Barrett&quot;, &quot;Chris Cree&quot;, &quot;Caesar Jaramillo&quot;, …
+## $ loserscore      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ loseroldrating  &lt;int&gt; 1915, 1840, 1622, 1612, 1537, 1676, 1647, 1739, 1612, …
+## $ losernewrating  &lt;int&gt; 1872, 1798, 1606, 1600, 1590, 1647, 1640, 1747, 1600, …
+## $ loserpos        &lt;int&gt; 3, 6, 10, 9, 4, 8, 7, 2, 9, 4, 5, 6, 6, 5, 6, 8, 1, 10…
+## $ round           &lt;int&gt; 1, 2, 3, 4, 6, 8, 9, 10, 3, 5, 6, 9, 10, 11, 3, 4, 7, …
+## $ division        &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+## $ date            &lt;chr&gt; &quot;1998-12-06&quot;, &quot;1998-12-06&quot;, &quot;1998-12-06&quot;, &quot;1998-12-06&quot;…
+## $ lexicon         &lt;chr&gt; &quot;False&quot;, &quot;False&quot;, &quot;False&quot;, &quot;False&quot;, &quot;False&quot;, &quot;False&quot;, …</code></pre>
+<p>There are a good amount of variables in this dataset, but I know I mainly need the date and score variables, so I can clean up this dataset a bit. There are also some observations with negative scores or scores of 0 for both the winner and the loser, so let’s eliminate those. I’m filtering to keep winning scores greater than 0 (assuming that winning scores recorded as 0 are incorrect/not possible) and losing scores greater than or equal to 0 (assuming a losing score of 0, recorded with a an actual winning score, is correct) # Wrangling data</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>cleandata &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="st">&quot;winnerscore&quot;</span>, <span class="st">&quot;loserscore&quot;</span>, <span class="st">&quot;date&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(winnerscore<span class="op">&gt;</span><span class="dv">0</span>, loserscore<span class="op">&gt;=</span><span class="dv">0</span>)</span></code></pre></div>
+<p>The visualization that I want to recreate does not discern between winning and losing scores, but just uses average score. Next, I need to combine the winning and losing score variables into one variable, average score. Another option is to gather the data into tidy format so that all of the scores fall under the same variable. Let’s try that # Consolidating scores</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>cleandata &lt;-<span class="st"> </span><span class="kw">gather</span>(cleandata, <span class="dt">key =</span> result, <span class="dt">value =</span> score, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(date, score)</span></code></pre></div>
+<p>Now we just have dates and scores. In the visualization, scores are averaged by week. Let’s see how the scatterplot looks before attempting this. # Initial scatterplot</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> score)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>()</span></code></pre></div>
+<p><img src="visualization_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>This plot is a mess - let’s continue to clean up the data by focusing on 2005 - present, which are the dates from the original figure. I’m having trouble filter the data though.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw">class</span>(cleandata<span class="op">$</span>date)</span></code></pre></div>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<p>Now I see that the date column is a character Let’s see if we can fix that.</p>
+</div>
+<div id="convert-character-to-date" class="section level1">
+<h1>Convert character to date</h1>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>cleandata &lt;-<span class="st"> </span>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">date =</span> <span class="kw">as.Date</span>(cleandata<span class="op">$</span>date, <span class="dt">format =</span> <span class="st">&quot;%Y-%m-%d&quot;</span>))</span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="kw">summary</span>(cleandata)</span></code></pre></div>
+<pre><code>##       date                score      
+##  Min.   :1976-12-05   Min.   :  0.0  
+##  1st Qu.:2007-04-13   1st Qu.:333.0  
+##  Median :2010-02-06   Median :373.0  
+##  Mean   :2009-05-22   Mean   :375.8  
+##  3rd Qu.:2013-04-13   3rd Qu.:415.0  
+##  Max.   :2017-03-05   Max.   :803.0</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="kw">class</span>(cleandata<span class="op">$</span>date)</span></code></pre></div>
+<pre><code>## [1] &quot;Date&quot;</code></pre>
+<p>Now it looks like we’ve successfully classified the date column. Now let’s try filtering again. # Filter dates</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>cleandata &lt;-<span class="st"> </span>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(date<span class="op">&gt;=</span><span class="st">&quot;2005-08-01&quot;</span> <span class="op">&amp;</span><span class="st"> </span>date<span class="op">&lt;=</span><span class="st">&quot;2006-08-01&quot;</span>)</span></code></pre></div>
+</div>
+<div id="preview-plot-again" class="section level1">
+<h1>Preview plot again</h1>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> score)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>()</span></code></pre></div>
+<p><img src="visualization_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>At this point, I think the main thing I need to do is group the scores by week and average them.</p>
+</div>
+<div id="assign-weeks-to-scores" class="section level1">
+<h1>Assign weeks to scores</h1>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>weekdata &lt;-<span class="st"> </span>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(<span class="dt">week =</span> <span class="kw">floor_date</span>(date, <span class="st">&quot;1 week&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(week, score) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">glimpse</span>()</span></code></pre></div>
+<pre><code>## Rows: 80,144
+## Columns: 2
+## Groups: week [51]
+## $ week  &lt;date&gt; 2005-08-21, 2005-08-21, 2005-08-21, 2005-08-21, 2005-08-21, 200…
+## $ score &lt;int&gt; 404, 433, 450, 323, 432, 524, 341, 452, 444, 409, 413, 449, 465,…</code></pre>
+<p>Now, we have the scores assigned to weeks. From here, we can figure out the average score for each week.</p>
+</div>
+<div id="average-scores" class="section level1">
+<h1>Average scores</h1>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>weekdata &lt;-<span class="st"> </span>weekdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(week) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(<span class="dt">avg_score=</span><span class="kw">mean</span>(score))</span>
+<span id="cb26-2"><a href="#cb26-2"></a><span class="kw">summary</span>(weekdata)</span></code></pre></div>
+<pre><code>##       week              avg_score    
+##  Min.   :2005-08-14   Min.   :357.8  
+##  1st Qu.:2005-11-09   1st Qu.:365.1  
+##  Median :2006-02-05   Median :372.3  
+##  Mean   :2006-02-05   Mean   :372.1  
+##  3rd Qu.:2006-05-03   3rd Qu.:376.0  
+##  Max.   :2006-07-30   Max.   :405.4</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="kw">glimpse</span>(weekdata)</span></code></pre></div>
+<pre><code>## Rows: 51
+## Columns: 2
+## $ week      &lt;date&gt; 2005-08-14, 2005-08-21, 2005-08-28, 2005-09-04, 2005-09-11,…
+## $ avg_score &lt;dbl&gt; 369.0843, 376.5833, 362.4530, 365.2479, 358.7208, 365.6656, …</code></pre>
+<p>Now, I think the data is ready to go for the plot. Let’s see what the scatterplot looks like now</p>
+</div>
+<div id="preview-plot" class="section level1">
+<h1>Preview plot</h1>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>weekdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> avg_score)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>()</span></code></pre></div>
+<p><img src="visualization_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>It looks like we have the correct date range for the graph. Let’s edit the labels and graph titles to match the original.</p>
+</div>
+<div id="attempt-to-edit-axis-labels" class="section level1">
+<h1>Attempt to edit axis labels</h1>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>weekdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> avg_score)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">scale_x_date</span>(<span class="dt">date_breaks =</span> <span class="st">&quot;3 months&quot;</span>, <span class="dt">date_labels =</span> <span class="st">&quot;%b-%y&quot;</span>)</span></code></pre></div>
+<p><img src="visualization_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>I could use date_labels to adjust the format to say the full or abbreviated month names, or use the full or abbreviated years. However, in the original figure, there is a mixture of formats for the labelling so I am not sure how to approach formatting the individual ticks. Let’s move on for now.</p>
+</div>
+<div id="editing-labels" class="section level1">
+<h1>Editing labels</h1>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="co">#removing x axis label, adding y axis label</span></span>
+<span id="cb32-2"><a href="#cb32-2"></a>weekdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> avg_score)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>()) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Average score&quot;</span>)</span></code></pre></div>
+<p><img src="visualization_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>I also should adjust the scale of the y axis to match the original (340 to 400, by 20)</p>
+</div>
+<div id="adjust-plot-range" class="section level1">
+<h1>Adjust plot range</h1>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a>weekdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> avg_score), <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">400</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>()) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Average score&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">360</span>, <span class="dv">380</span>, <span class="dv">400</span>), <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">420</span>))</span></code></pre></div>
+<p><img src="visualization_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>Now let’s try to add the line for the March 1st change in rules # Add line marking date of rule change</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a>weekdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> avg_score), <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">400</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>()) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Average score&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">360</span>, <span class="dv">380</span>, <span class="dv">400</span>), <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">420</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_vline</span>(<span class="kw">aes</span>(<span class="dt">xintercept =</span> <span class="kw">as.numeric</span>(week[<span class="dv">30</span>])))</span></code></pre></div>
+<p><img src="visualization_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>I had trouble getting a line at the March 5, 2006 date, but eventually decided to use the column number for the week of March 5, which is column 60. Now let’s see if we can make the line dashed and add some text. # Labelling the line</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>weekdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> avg_score), <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">400</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>()) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Average score&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">360</span>, <span class="dv">380</span>, <span class="dv">400</span>), <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">420</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_vline</span>(<span class="kw">aes</span>(<span class="dt">xintercept =</span> <span class="kw">as.numeric</span>(week[<span class="dv">30</span>])))<span class="op">+</span></span>
+<span id="cb35-2"><a href="#cb35-2"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>,<span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),</span>
+<span id="cb35-3"><a href="#cb35-3"></a>    <span class="dt">y=</span><span class="dv">410</span>,<span class="dt">label=</span><span class="st">&quot;MARCH 1&quot;</span>,<span class="dt">fontface=</span><span class="st">&quot;bold&quot;</span>)<span class="op">+</span></span>
+<span id="cb35-4"><a href="#cb35-4"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>,<span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),</span>
+<span id="cb35-5"><a href="#cb35-5"></a>    <span class="dt">y=</span><span class="dv">405</span>,<span class="dt">label=</span><span class="st">&quot;Dictionary updated&quot;</span>)</span></code></pre></div>
+<p><img src="visualization_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>Next, I can focus on adding the trendlines. Some Googling helped me figure out how to separate the trendline into segments.</p>
+</div>
+<div id="add-trendlines" class="section level1">
+<h1>Add trendlines</h1>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a>weekdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> avg_score), <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">400</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>()) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Average score&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">360</span>, <span class="dv">380</span>, <span class="dv">400</span>), <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">420</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_vline</span>(<span class="kw">aes</span>(<span class="dt">xintercept =</span> <span class="kw">as.numeric</span>(week[<span class="dv">30</span>])))<span class="op">+</span></span>
+<span id="cb36-2"><a href="#cb36-2"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>,<span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),</span>
+<span id="cb36-3"><a href="#cb36-3"></a>    <span class="dt">y=</span><span class="dv">410</span>,<span class="dt">label=</span><span class="st">&quot;MARCH 1&quot;</span>,<span class="dt">fontface=</span><span class="st">&quot;bold&quot;</span>)<span class="op">+</span></span>
+<span id="cb36-4"><a href="#cb36-4"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>,<span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),</span>
+<span id="cb36-5"><a href="#cb36-5"></a>    <span class="dt">y=</span><span class="dv">405</span>,<span class="dt">label=</span><span class="st">&quot;Dictionary updated&quot;</span>)<span class="op">+</span></span>
+<span id="cb36-6"><a href="#cb36-6"></a><span class="st">  </span><span class="kw">stat_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span>x, <span class="dt">size =</span> <span class="fl">0.75</span>, <span class="dt">se =</span> <span class="ot">TRUE</span>, <span class="dt">level =</span> <span class="fl">0.40</span>,</span>
+<span id="cb36-7"><a href="#cb36-7"></a>              <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.2</span>, </span>
+<span id="cb36-8"><a href="#cb36-8"></a>              <span class="dt">data =</span> weekdata[weekdata<span class="op">$</span>week <span class="op">&lt;</span><span class="st"> </span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),]) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb36-9"><a href="#cb36-9"></a><span class="st">  </span><span class="kw">stat_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span>x, <span class="dt">size =</span> <span class="fl">0.75</span>, <span class="dt">se =</span> <span class="ot">TRUE</span>, <span class="dt">level =</span> <span class="fl">0.40</span>,</span>
+<span id="cb36-10"><a href="#cb36-10"></a>              <span class="dt">color =</span> <span class="st">&quot;forestgreen&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;forestgreen&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.2</span>,</span>
+<span id="cb36-11"><a href="#cb36-11"></a>              <span class="dt">data =</span> weekdata[weekdata<span class="op">$</span>week <span class="op">&gt;=</span><span class="st"> </span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),])</span></code></pre></div>
+<p><img src="visualization_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>Alright, now we have some trendlines. I adjusted the level parameter by decreasing the confidence interval from 95% to 40% to achieve a similar look to the original figure. Now, I can try to adjust the color of the lines and points as well as add some more annotation.</p>
+</div>
+<div id="adjusting-trendline-color" class="section level1">
+<h1>Adjusting trendline color</h1>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>weekdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> avg_score), <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">400</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">fill=</span><span class="st">&quot;azure4&quot;</span>, <span class="dt">pch=</span><span class="dv">21</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb37-2"><a href="#cb37-2"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>()) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Average score&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">360</span>, <span class="dv">380</span>, <span class="dv">400</span>), <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">420</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_vline</span>(<span class="kw">aes</span>(<span class="dt">xintercept =</span> <span class="kw">as.numeric</span>(week[<span class="dv">30</span>])))<span class="op">+</span></span>
+<span id="cb37-3"><a href="#cb37-3"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>,<span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),</span>
+<span id="cb37-4"><a href="#cb37-4"></a>    <span class="dt">y=</span><span class="dv">410</span>,<span class="dt">label=</span><span class="st">&quot;MARCH 1&quot;</span>,<span class="dt">fontface=</span><span class="st">&quot;bold&quot;</span>)<span class="op">+</span></span>
+<span id="cb37-5"><a href="#cb37-5"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>,<span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),</span>
+<span id="cb37-6"><a href="#cb37-6"></a>    <span class="dt">y=</span><span class="dv">405</span>,<span class="dt">label=</span><span class="st">&quot;Dictionary updated&quot;</span>)<span class="op">+</span></span>
+<span id="cb37-7"><a href="#cb37-7"></a></span>
+<span id="cb37-8"><a href="#cb37-8"></a><span class="st">  </span><span class="kw">stat_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span>x, <span class="dt">size =</span> <span class="fl">0.75</span>, <span class="dt">se =</span> <span class="ot">TRUE</span>, <span class="dt">level =</span> <span class="fl">0.40</span>,</span>
+<span id="cb37-9"><a href="#cb37-9"></a>              <span class="dt">color =</span> <span class="st">&quot;darkorange&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;darkorange&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.2</span>, </span>
+<span id="cb37-10"><a href="#cb37-10"></a>              <span class="dt">data =</span> weekdata[weekdata<span class="op">$</span>week <span class="op">&lt;</span><span class="st"> </span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),]) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb37-11"><a href="#cb37-11"></a><span class="st">  </span><span class="kw">stat_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span>x, <span class="dt">size =</span> <span class="fl">0.75</span>, <span class="dt">se =</span> <span class="ot">TRUE</span>, <span class="dt">level =</span> <span class="fl">0.40</span>,</span>
+<span id="cb37-12"><a href="#cb37-12"></a>              <span class="dt">color =</span> <span class="st">&quot;darkorange&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;darkorange&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.2</span>,</span>
+<span id="cb37-13"><a href="#cb37-13"></a>              <span class="dt">data =</span> weekdata[weekdata<span class="op">$</span>week <span class="op">&gt;=</span><span class="st"> </span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),])</span></code></pre></div>
+<p><img src="visualization_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>Ideally, I would like to decrease the font size for the annotation and make the March 5th line dotted. I also still need to add the text for before and after.</p>
+</div>
+<div id="final-product" class="section level1">
+<h1>Final product</h1>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a>weekdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> avg_score), <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">400</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">fill=</span><span class="st">&quot;azure4&quot;</span>, <span class="dt">pch=</span><span class="dv">21</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb38-2"><a href="#cb38-2"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>()) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Average score&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_y_continuous</span>(<span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">360</span>, <span class="dv">380</span>, <span class="dv">400</span>), <span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">340</span>, <span class="dv">420</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">axis.text =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">6</span>), <span class="dt">axis.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">6</span>))<span class="op">+</span></span>
+<span id="cb38-3"><a href="#cb38-3"></a><span class="st">  </span><span class="kw">geom_vline</span>(<span class="kw">aes</span>(<span class="dt">xintercept =</span> <span class="kw">as.numeric</span>(week[<span class="dv">30</span>])))<span class="op">+</span></span>
+<span id="cb38-4"><a href="#cb38-4"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>,<span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),</span>
+<span id="cb38-5"><a href="#cb38-5"></a>    <span class="dt">y=</span><span class="dv">410</span>,<span class="dt">label=</span><span class="st">&quot;MARCH 1&quot;</span>,<span class="dt">fontface=</span><span class="st">&quot;bold&quot;</span>, <span class="dt">size=</span><span class="dv">2</span>)<span class="op">+</span></span>
+<span id="cb38-6"><a href="#cb38-6"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>,<span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),</span>
+<span id="cb38-7"><a href="#cb38-7"></a>    <span class="dt">y=</span><span class="dv">406</span>,<span class="dt">label=</span><span class="st">&quot;Dictionary&quot;</span>, <span class="dt">size=</span><span class="dv">2</span>)<span class="op">+</span></span>
+<span id="cb38-8"><a href="#cb38-8"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>,<span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),</span>
+<span id="cb38-9"><a href="#cb38-9"></a>    <span class="dt">y=</span><span class="dv">402</span>,<span class="dt">label=</span><span class="st">&quot; updated&quot;</span>, <span class="dt">size=</span><span class="dv">2</span>)<span class="op">+</span></span>
+<span id="cb38-10"><a href="#cb38-10"></a></span>
+<span id="cb38-11"><a href="#cb38-11"></a><span class="st">  </span><span class="kw">stat_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span>x, <span class="dt">size =</span> <span class="fl">0.75</span>, <span class="dt">se =</span> <span class="ot">TRUE</span>, <span class="dt">level =</span> <span class="fl">0.40</span>,</span>
+<span id="cb38-12"><a href="#cb38-12"></a>              <span class="dt">color =</span> <span class="st">&quot;darkorange&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;darkorange&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.2</span>, </span>
+<span id="cb38-13"><a href="#cb38-13"></a>              <span class="dt">data =</span> weekdata[weekdata<span class="op">$</span>week <span class="op">&lt;</span><span class="st"> </span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),]) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb38-14"><a href="#cb38-14"></a><span class="st">  </span><span class="kw">stat_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span>x, <span class="dt">size =</span> <span class="fl">0.75</span>, <span class="dt">se =</span> <span class="ot">TRUE</span>, <span class="dt">level =</span> <span class="fl">0.40</span>,</span>
+<span id="cb38-15"><a href="#cb38-15"></a>              <span class="dt">color =</span> <span class="st">&quot;darkorange&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;darkorange&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.2</span>,</span>
+<span id="cb38-16"><a href="#cb38-16"></a>              <span class="dt">data =</span> weekdata[weekdata<span class="op">$</span>week <span class="op">&gt;=</span><span class="st"> </span><span class="kw">as.Date</span>(<span class="st">&quot;2006-03-05&quot;</span>),])<span class="op">+</span></span>
+<span id="cb38-17"><a href="#cb38-17"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>, <span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2005-11-01&quot;</span>), <span class="dt">y=</span><span class="dv">380</span>, <span class="dt">label=</span><span class="st">&quot;Trend before&quot;</span>, <span class="dt">color=</span><span class="st">&quot;darkorange&quot;</span>, <span class="dt">size=</span><span class="dv">2</span>)<span class="op">+</span></span>
+<span id="cb38-18"><a href="#cb38-18"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>, <span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-06-15&quot;</span>), <span class="dt">y=</span><span class="dv">380</span>, <span class="dt">label=</span><span class="st">&quot;Trend after&quot;</span>, <span class="dt">color=</span><span class="st">&quot;darkorange&quot;</span>, <span class="dt">size=</span><span class="dv">2</span>)<span class="op">+</span></span>
+<span id="cb38-19"><a href="#cb38-19"></a><span class="st">  </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>, <span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-01-01&quot;</span>), <span class="dt">y=</span><span class="dv">350</span>, <span class="dt">label=</span><span class="st">&quot;Uncertainty&quot;</span>, <span class="dt">size=</span><span class="dv">2</span>, <span class="dt">fontface=</span><span class="st">&#39;italic&#39;</span>)<span class="op">+</span></span>
+<span id="cb38-20"><a href="#cb38-20"></a><span class="st">  </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">as.Date</span>(<span class="st">&quot;2006-01-01&quot;</span>), <span class="dt">y=</span><span class="dv">351</span>, <span class="dt">xend =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2006-01-15&quot;</span>), <span class="dt">yend =</span> <span class="dv">370</span>), <span class="dt">size=</span><span class="fl">0.25</span>)<span class="op">+</span></span>
+<span id="cb38-21"><a href="#cb38-21"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">aspect.ratio =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">1</span>)<span class="op">+</span><span class="st"> </span><span class="co">#make figure square</span></span>
+<span id="cb38-22"><a href="#cb38-22"></a><span class="kw">ggtitle</span>(<span class="st">&quot;Scrabble scores in the age of &#39;QI&#39; and &#39;ZA&#39;&quot;</span>, <span class="st">&quot;Weekly average scores before and after the addition of around </span><span class="ch">\n</span><span class="st">11,000 words to the Scrabble dictionary&quot;</span>) <span class="op">+</span></span>
+<span id="cb38-23"><a href="#cb38-23"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">10</span>, <span class="dt">face=</span><span class="st">&quot;bold&quot;</span>))<span class="op">+</span></span>
+<span id="cb38-24"><a href="#cb38-24"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.subtitle =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">9</span>))</span></code></pre></div>
+<p><img src="visualization_files/figure-html/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>I noticed that the aspect ratio of my graph didn’t match the original, which was square, so I adjusted this in the previous code chunk. I couldn’t figure out how to make the March 1st line dotted, or how to clear a segment of it where the text is. However, I think the figure I have created looks decently similar to the original. I can tell that my data points are a little different than the original, which likely has to do with how the data was cleaned/wrangled. But, the same trends still stand - the change in Scrabble rules appears to have increased average scores among players.</p>
+</div>
+<div id="original" class="section level1">
+<h1>Original</h1>
+<p><img src="scrabblevis.png" width="50%" style="display: block; margin: auto;" /></p>
+</div>
 
 
 
