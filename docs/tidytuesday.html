@@ -13,6 +13,7 @@
 
 <title>Tidy Tuesday</title>
 
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
@@ -43,6 +44,99 @@
     </style>
 
 
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -274,7 +368,364 @@ $(document).ready(function () {
 </div>
 
 
-<p>This will contain the future Tidy Tuesday exercise.</p>
+<div id="loading-required-packages" class="section level1">
+<h1>Loading required packages</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(knitr)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(here)</span></code></pre></div>
+<pre><code>## here() starts at /Users/ameliafoley/Desktop/MADA/AMELIAFOLEY-MADA-portfolio</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">library</span>(scales)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;scales&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     discard</code></pre>
+<pre><code>## The following object is masked from &#39;package:readr&#39;:
+## 
+##     col_factor</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">library</span>(ggthemes)</span></code></pre></div>
+<p>For this assignment, I will work with the R for Data Science Tidy Tuesday Dataset, week 40 (9/28/2021).</p>
+</div>
+<div id="loading-data" class="section level1">
+<h1>Loading data</h1>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>loc_authors &lt;-<span class="st"> </span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;2021-09-28&quot;</span>, <span class="st">&quot;authors.csv&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2"></a>loc_combo &lt;-<span class="st"> </span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;2021-09-28&quot;</span>, <span class="st">&quot;combo_df.csv&quot;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3"></a>loc_paperauthors &lt;-<span class="st"> </span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;2021-09-28&quot;</span>, <span class="st">&quot;paper_authors.csv&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4"></a>loc_paperprograms &lt;-<span class="st"> </span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;2021-09-28&quot;</span>, <span class="st">&quot;paper_programs.csv&quot;</span>)</span>
+<span id="cb8-5"><a href="#cb8-5"></a>loc_papers &lt;-<span class="st"> </span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;2021-09-28&quot;</span>, <span class="st">&quot;papers.csv&quot;</span>)</span>
+<span id="cb8-6"><a href="#cb8-6"></a>loc_programs &lt;-<span class="st"> </span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;2021-09-28&quot;</span>, <span class="st">&quot;programs.csv&quot;</span>)</span>
+<span id="cb8-7"><a href="#cb8-7"></a></span>
+<span id="cb8-8"><a href="#cb8-8"></a></span>
+<span id="cb8-9"><a href="#cb8-9"></a>authors &lt;-<span class="st"> </span><span class="kw">read.csv</span>(loc_authors)</span>
+<span id="cb8-10"><a href="#cb8-10"></a>combo &lt;-<span class="st"> </span><span class="kw">read.csv</span>(loc_combo)</span>
+<span id="cb8-11"><a href="#cb8-11"></a>paperauthors &lt;-<span class="st"> </span><span class="kw">read.csv</span>(loc_paperauthors)</span>
+<span id="cb8-12"><a href="#cb8-12"></a>paperprograms &lt;-<span class="st"> </span><span class="kw">read.csv</span>(loc_paperprograms)</span>
+<span id="cb8-13"><a href="#cb8-13"></a>paper &lt;-<span class="st"> </span><span class="kw">read.csv</span>(loc_papers)</span>
+<span id="cb8-14"><a href="#cb8-14"></a>programs &lt;-<span class="st"> </span><span class="kw">read.csv</span>(loc_programs)</span></code></pre></div>
+</div>
+<div id="take-a-look-at-data" class="section level1">
+<h1>Take a look at data</h1>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">glimpse</span>(authors)</span></code></pre></div>
+<pre><code>## Rows: 15,437
+## Columns: 4
+## $ author     &lt;chr&gt; &quot;w0001.1&quot;, &quot;w0002.1&quot;, &quot;w0003.1&quot;, &quot;w0004.1&quot;, &quot;w0005.1&quot;, &quot;w00…
+## $ name       &lt;chr&gt; &quot;Finis Welch&quot;, &quot;Barry R Chiswick&quot;, &quot;Swarnjit S Arora&quot;, &quot;Lee…
+## $ user_nber  &lt;chr&gt; &quot;finis_welch&quot;, &quot;barry_chiswick&quot;, &quot;swarnjit_arora&quot;, NA, &quot;jam…
+## $ user_repec &lt;chr&gt; NA, &quot;pch425&quot;, NA, &quot;pli669&quot;, &quot;psm28&quot;, NA, NA, NA, &quot;pli259&quot;, …</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">glimpse</span>(combo)</span></code></pre></div>
+<pre><code>## Rows: 130,081
+## Columns: 12
+## $ paper            &lt;chr&gt; &quot;w0001&quot;, &quot;w0002&quot;, &quot;w0003&quot;, &quot;w0004&quot;, &quot;w0005&quot;, &quot;w0006&quot;,…
+## $ catalogue_group  &lt;chr&gt; &quot;General&quot;, &quot;General&quot;, &quot;General&quot;, &quot;General&quot;, &quot;General&quot;…
+## $ year             &lt;int&gt; 1973, 1973, 1973, 1973, 1973, 1973, 1973, 1973, 1973,…
+## $ month            &lt;int&gt; 6, 6, 6, 7, 7, 7, 8, 9, 9, 9, 9, 9, 10, 10, 10, 10, 1…
+## $ title            &lt;chr&gt; &quot;Education, Information, and Efficiency&quot;, &quot;Hospital U…
+## $ author           &lt;chr&gt; &quot;w0001.1&quot;, &quot;w0002.1&quot;, &quot;w0003.1&quot;, &quot;w0004.1&quot;, &quot;w0005.1&quot;…
+## $ name             &lt;chr&gt; &quot;Finis Welch&quot;, &quot;Barry R Chiswick&quot;, &quot;Swarnjit S Arora&quot;…
+## $ user_nber        &lt;chr&gt; &quot;finis_welch&quot;, &quot;barry_chiswick&quot;, &quot;swarnjit_arora&quot;, NA…
+## $ user_repec       &lt;chr&gt; NA, &quot;pch425&quot;, NA, &quot;pli669&quot;, &quot;psm28&quot;, NA, NA, NA, &quot;pli…
+## $ program          &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+## $ program_desc     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+## $ program_category &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">glimpse</span>(paperauthors)</span></code></pre></div>
+<pre><code>## Rows: 67,090
+## Columns: 2
+## $ paper  &lt;chr&gt; &quot;w0001&quot;, &quot;w0002&quot;, &quot;w0003&quot;, &quot;w0004&quot;, &quot;w0005&quot;, &quot;w0006&quot;, &quot;w0007&quot;, …
+## $ author &lt;chr&gt; &quot;w0001.1&quot;, &quot;w0002.1&quot;, &quot;w0003.1&quot;, &quot;w0004.1&quot;, &quot;w0005.1&quot;, &quot;w0006.1…</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">glimpse</span>(paperprograms)</span></code></pre></div>
+<pre><code>## Rows: 53,996
+## Columns: 2
+## $ paper   &lt;chr&gt; &quot;w0074&quot;, &quot;w0087&quot;, &quot;w0087&quot;, &quot;w0107&quot;, &quot;w0116&quot;, &quot;w0117&quot;, &quot;w0129&quot;,…
+## $ program &lt;chr&gt; &quot;EFG&quot;, &quot;IFM&quot;, &quot;ITI&quot;, &quot;PE&quot;, &quot;PE&quot;, &quot;LS&quot;, &quot;HE&quot;, &quot;IFM&quot;, &quot;ITI&quot;, &quot;HE…</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">glimpse</span>(paper)</span></code></pre></div>
+<pre><code>## Rows: 29,434
+## Columns: 4
+## $ paper &lt;chr&gt; &quot;w0001&quot;, &quot;w0002&quot;, &quot;w0003&quot;, &quot;w0004&quot;, &quot;w0005&quot;, &quot;w0006&quot;, &quot;w0007&quot;, &quot;…
+## $ year  &lt;int&gt; 1973, 1973, 1973, 1973, 1973, 1973, 1973, 1973, 1973, 1973, 1973…
+## $ month &lt;int&gt; 6, 6, 6, 7, 7, 7, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 12,…
+## $ title &lt;chr&gt; &quot;Education, Information, and Efficiency&quot;, &quot;Hospital Utilization:…</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw">glimpse</span>(programs)</span></code></pre></div>
+<pre><code>## Rows: 21
+## Columns: 3
+## $ program          &lt;chr&gt; &quot;AG&quot;, &quot;AP&quot;, &quot;CF&quot;, &quot;CH&quot;, &quot;DAE&quot;, &quot;DEV&quot;, &quot;ED&quot;, &quot;EEE&quot;, &quot;E…
+## $ program_desc     &lt;chr&gt; &quot;Economics of Aging&quot;, &quot;Asset Pricing&quot;, &quot;Corporate Fin…
+## $ program_category &lt;chr&gt; &quot;Micro&quot;, &quot;Finance&quot;, &quot;Finance&quot;, &quot;Micro&quot;, &quot;Micro&quot;, &quot;Mic…</code></pre>
+<p>After looking at these data files, it looks like we loaded more than we needed. “Combo” represents a combination of the other individual data files. We’ll work with that going forward. “Combo” gives us 130,081 observations of 12 variables, so we have a lot to work with.</p>
+</div>
+<div id="looking-at-combo-data-specifically" class="section level1">
+<h1>Looking at combo data specifically</h1>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="kw">head</span>(combo)</span></code></pre></div>
+<pre><code>##   paper catalogue_group year month
+## 1 w0001         General 1973     6
+## 2 w0002         General 1973     6
+## 3 w0003         General 1973     6
+## 4 w0004         General 1973     7
+## 5 w0005         General 1973     7
+## 6 w0006         General 1973     7
+##                                                                                                              title
+## 1                                                                           Education, Information, and Efficiency
+## 2 Hospital Utilization: An Analysis of SMSA Differences in Hospital Admission Rates, Occupancy Rates and Bed Rates
+## 3                                                        Error Components Regression Models and Their Applications
+## 4                                  Human Capital Life Cycle of Earnings Models: A Specific Solution and Estimation
+## 5                                                                                        A Life Cycle Family Model
+## 6                                       A Review of Cyclical Indicators for the United States: Preliminary Results
+##    author             name        user_nber user_repec program program_desc
+## 1 w0001.1      Finis Welch      finis_welch       &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;
+## 2 w0002.1 Barry R Chiswick   barry_chiswick     pch425    &lt;NA&gt;         &lt;NA&gt;
+## 3 w0003.1 Swarnjit S Arora   swarnjit_arora       &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;
+## 4 w0004.1    Lee A Lillard             &lt;NA&gt;     pli669    &lt;NA&gt;         &lt;NA&gt;
+## 5 w0005.1    James P Smith      james_smith      psm28    &lt;NA&gt;         &lt;NA&gt;
+## 6 w0006.1 Victor Zarnowitz victor_zarnowitz       &lt;NA&gt;    &lt;NA&gt;         &lt;NA&gt;
+##   program_category
+## 1             &lt;NA&gt;
+## 2             &lt;NA&gt;
+## 3             &lt;NA&gt;
+## 4             &lt;NA&gt;
+## 5             &lt;NA&gt;
+## 6             &lt;NA&gt;</code></pre>
+<p>It looks like the columns “user_nber” and “user_repec” may be left over from combining datasets to get authors names. I don’t think we’ll need these for analysis, so let’s remove them.</p>
+</div>
+<div id="removing-unnessecary-variables" class="section level1">
+<h1>Removing unnessecary variables</h1>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>cleandata &lt;-<span class="st"> </span>combo <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span><span class="st">&quot;user_nber&quot;</span>, <span class="op">-</span><span class="st">&quot;user_repec&quot;</span>)</span></code></pre></div>
+<p>Even just looking at the top few rows of the combo object, I can see that there are missing values in the program, program description, and program category sections. Let’s see how much info is missing.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="kw">is.na</span>(cleandata<span class="op">$</span>program) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summary</span>()</span></code></pre></div>
+<pre><code>##    Mode   FALSE    TRUE 
+## logical  129551     530</code></pre>
+<p>This tells us that there are 530 observations out of 129551 that are missing program data. Since this is a relatively small proportion, let’s just remove the NA values and see where that gets us.</p>
+</div>
+<div id="removing-na-values" class="section level1">
+<h1>Removing NA values</h1>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>cleandata &lt;-<span class="st"> </span>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">na.omit</span>(program)</span></code></pre></div>
+</div>
+<div id="check-for-missing-values-again" class="section level1">
+<h1>Check for missing values again</h1>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="kw">which</span>(<span class="kw">is.na</span>(cleandata))</span></code></pre></div>
+<pre><code>## integer(0)</code></pre>
+<p>It looks like we have gotten rid of all of the observations with missing info now. Let’s look at the data again.</p>
+</div>
+<div id="check-data-in-the-process-of-cleaning" class="section level1">
+<h1>Check data in the process of cleaning</h1>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="kw">head</span>(cleandata)</span></code></pre></div>
+<pre><code>##     paper catalogue_group year month
+## 96  w0074         General 1975     3
+## 111 w0087         General 1975     5
+## 112 w0087         General 1975     5
+## 113 w0087         General 1975     5
+## 114 w0087         General 1975     5
+## 142 w0107         General 1975    10
+##                                                             title  author
+## 96            Variation Across Household in the Rate of Inflation w0021.2
+## 111 Exports and Foreign Investment in the Pharmaceutical Industry w0008.1
+## 112 Exports and Foreign Investment in the Pharmaceutical Industry w0008.1
+## 113 Exports and Foreign Investment in the Pharmaceutical Industry w0008.2
+## 114 Exports and Foreign Investment in the Pharmaceutical Industry w0008.2
+## 142                      Social Security and Retirement Decisions w0107.1
+##                 name program                             program_desc
+## 96  Robert T Michael     EFG         Economic Fluctuations and Growth
+## 111 Merle Yahr Weiss     IFM International Finance and Macroeconomics
+## 112 Merle Yahr Weiss     ITI       International Trade and Investment
+## 113  Robert E Lipsey     IFM International Finance and Macroeconomics
+## 114  Robert E Lipsey     ITI       International Trade and Investment
+## 142 Michael J Boskin      PE                         Public Economics
+##        program_category
+## 96  Macro/International
+## 111 Macro/International
+## 112 Macro/International
+## 113 Macro/International
+## 114 Macro/International
+## 142               Micro</code></pre>
+<p>Since the program column contains the acronym for the corresponding description in the program_desc column, the program_desc column is going to be more informative. I think we can go ahead and remove the program column as well as the paper and author columns which just contains ids.</p>
+</div>
+<div id="removing-more-variables" class="section level1">
+<h1>Removing more variables</h1>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>cleandata &lt;-<span class="st"> </span>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span><span class="st">&quot;paper&quot;</span>, <span class="op">-</span><span class="st">&quot;program&quot;</span>)</span></code></pre></div>
+<p>Another thing I notice is that paper titles are repeated in the dataset since there are multiple authors for some papers. I think this is good since it’s already in tidy-ish format. We can see what “number” author a particular author is based on the final digit in the “author” column. Maybe we can alter this variable to keep just that final digit to make it easier to compare author position.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a>test &lt;-<span class="st"> </span>cleandata</span>
+<span id="cb32-2"><a href="#cb32-2"></a>test<span class="op">$</span>author &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">strsplit</span>(<span class="kw">as.character</span>(cleandata<span class="op">$</span>author), <span class="st">&quot;.&quot;</span>, <span class="dt">fixed =</span> <span class="ot">TRUE</span>), <span class="st">`</span><span class="dt">[</span><span class="st">`</span>, <span class="dv">2</span>)</span>
+<span id="cb32-3"><a href="#cb32-3"></a>cleandata &lt;-<span class="st"> </span>test </span></code></pre></div>
+<p>Okay, I think that last code chunk successfully provided author positions. Now, I see that there are some repeated listings of papers and authors that have been listed under multiple program categories. I’m not sure the best way to approach this, but I think it needs to be addressed because the duplicates could cause issues in analysis. Let’s figure out how to subset this data in a way that makes sense. We could use group_by to subset the data further.</p>
+</div>
+<div id="checking-in-on-data" class="section level1">
+<h1>Checking in on data</h1>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="kw">glimpse</span>(cleandata)</span></code></pre></div>
+<pre><code>## Rows: 128,565
+## Columns: 8
+## $ catalogue_group  &lt;chr&gt; &quot;General&quot;, &quot;General&quot;, &quot;General&quot;, &quot;General&quot;, &quot;General&quot;…
+## $ year             &lt;int&gt; 1975, 1975, 1975, 1975, 1975, 1975, 1975, 1980, 1976,…
+## $ month            &lt;int&gt; 3, 5, 5, 5, 5, 10, 11, 4, 3, 3, 3, 3, 3, 4, 4, 4, 10,…
+## $ title            &lt;chr&gt; &quot;Variation Across Household in the Rate of Inflation&quot;…
+## $ author           &lt;chr&gt; &quot;2&quot;, &quot;1&quot;, &quot;1&quot;, &quot;2&quot;, &quot;2&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;…
+## $ name             &lt;chr&gt; &quot;Robert T Michael&quot;, &quot;Merle Yahr Weiss&quot;, &quot;Merle Yahr W…
+## $ program_desc     &lt;chr&gt; &quot;Economic Fluctuations and Growth&quot;, &quot;International Fi…
+## $ program_category &lt;chr&gt; &quot;Macro/International&quot;, &quot;Macro/International&quot;, &quot;Macro/…</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a><span class="kw">head</span>(cleandata)</span></code></pre></div>
+<pre><code>##     catalogue_group year month
+## 96          General 1975     3
+## 111         General 1975     5
+## 112         General 1975     5
+## 113         General 1975     5
+## 114         General 1975     5
+## 142         General 1975    10
+##                                                             title author
+## 96            Variation Across Household in the Rate of Inflation      2
+## 111 Exports and Foreign Investment in the Pharmaceutical Industry      1
+## 112 Exports and Foreign Investment in the Pharmaceutical Industry      1
+## 113 Exports and Foreign Investment in the Pharmaceutical Industry      2
+## 114 Exports and Foreign Investment in the Pharmaceutical Industry      2
+## 142                      Social Security and Retirement Decisions      1
+##                 name                             program_desc
+## 96  Robert T Michael         Economic Fluctuations and Growth
+## 111 Merle Yahr Weiss International Finance and Macroeconomics
+## 112 Merle Yahr Weiss       International Trade and Investment
+## 113  Robert E Lipsey International Finance and Macroeconomics
+## 114  Robert E Lipsey       International Trade and Investment
+## 142 Michael J Boskin                         Public Economics
+##        program_category
+## 96  Macro/International
+## 111 Macro/International
+## 112 Macro/International
+## 113 Macro/International
+## 114 Macro/International
+## 142               Micro</code></pre>
+</div>
+<div id="grouping-data" class="section level1">
+<h1>Grouping data</h1>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(title)</span></code></pre></div>
+<pre><code>## # A tibble: 128,565 × 8
+## # Groups:   title [28,937]
+##    catalogue_group  year month title  author name  program_desc program_category
+##    &lt;chr&gt;           &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;        &lt;chr&gt;           
+##  1 General          1975     3 Varia… 2      Robe… Economic Fl… Macro/Internati…
+##  2 General          1975     5 Expor… 1      Merl… Internation… Macro/Internati…
+##  3 General          1975     5 Expor… 1      Merl… Internation… Macro/Internati…
+##  4 General          1975     5 Expor… 2      Robe… Internation… Macro/Internati…
+##  5 General          1975     5 Expor… 2      Robe… Internation… Macro/Internati…
+##  6 General          1975    10 Socia… 1      Mich… Public Econ… Micro           
+##  7 General          1975    11 Notes… 1      Mich… Public Econ… Micro           
+##  8 General          1980     4 Job M… 1      Ann … Labor Studi… Micro           
+##  9 General          1976     3 A Sur… 1      Mich… Health Econ… Micro           
+## 10 General          1976     3 Expor… 1      Merl… Internation… Macro/Internati…
+## # … with 128,555 more rows</code></pre>
+<p>I’m not having a ton of success trying to use group_by with this object. Let’s see if we can take advantage of the format the data is in right now and look at publication in different fields (based on program description) over time. Let’s look at how many different types of programs and catalouge types we have.</p>
+</div>
+<div id="summary-of-catalouge-group-and-program" class="section level1">
+<h1>Summary of catalouge group and program</h1>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a><span class="kw">glimpse</span>(cleandata<span class="op">$</span>catalogue_group)</span></code></pre></div>
+<pre><code>##  chr [1:128565] &quot;General&quot; &quot;General&quot; &quot;General&quot; &quot;General&quot; &quot;General&quot; &quot;General&quot; ...</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="kw">summary</span>(cleandata<span class="op">$</span>program_desc)</span></code></pre></div>
+<pre><code>##    Length     Class      Mode 
+##    128565 character character</code></pre>
+<p>Not sure the best way to get a summary when looking at a character variable. Let’s try a plot. I remember a plot from Amanda’s visualization last week that could be useful, since it included lots of categories summarized in a legend, and represented values over time. I’ll try to create something similar.</p>
+</div>
+<div id="plotting-publications-over-time" class="section level1">
+<h1>Plotting publications over time</h1>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">fill =</span> program_desc )) <span class="op">+</span></span>
+<span id="cb43-2"><a href="#cb43-2"></a><span class="st">  </span><span class="kw">geom_area</span>(<span class="dt">stat=</span><span class="st">&quot;bin&quot;</span>, <span class="dt">bins =</span> <span class="dv">20</span>)</span></code></pre></div>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(catalogue_group)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>()</span></code></pre></div>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>The comparison of this category is not very interesting. Let’s move on.</p>
+</div>
+<div id="comparing-program-category" class="section level1">
+<h1>Comparing program category</h1>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(program_category)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>()</span></code></pre></div>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>This figure is a little more informative. There were a lot more publications in the Micro field than Macro and Finance. However, this result could be wonky based on there being duplicate observations for papers encoded as falling under different program descriptions and categories. Maybe we can look into that further later on.</p>
+</div>
+<div id="comparing-program-descriptions" class="section level1">
+<h1>Comparing program descriptions</h1>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(program_desc)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>()</span></code></pre></div>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>This plot could provide us with some interesting info, but we need to adjust the labels on the x-axis so that they are readable. Found some code from an article at this <a href="https://datavizpyr.com/how-to-dodge-overlapping-text-on-x-axis-labels-in-ggplot2/">link</a></p>
+</div>
+<div id="editing-x-axis-labels" class="section level1">
+<h1>Editing x-axis labels</h1>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(program_desc)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>() <span class="op">+</span><span class="st"> </span><span class="kw">scale_x_discrete</span>(<span class="dt">guide =</span> <span class="kw">guide_axis</span>(<span class="dt">n.dodge=</span><span class="dv">3</span>))</span></code></pre></div>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>That’s a little better, but not great.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(program_desc)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">45</span>, <span class="dt">hjust=</span><span class="dv">1</span>))</span></code></pre></div>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+<div id="is-there-a-certain-month-when-the-most-papers-are-published" class="section level1">
+<h1>Is there a certain month when the most papers are published?</h1>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> month, <span class="dt">fill =</span> program_desc )) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>()</span></code></pre></div>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>Looking at the first plot we created, it looks like there was huge peak between 2015 and 2020. Let’s look at what subject areas those papers were mostly in.</p>
+</div>
+<div id="subsetting-data" class="section level1">
+<h1>Subsetting data</h1>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>data2015on &lt;-<span class="st"> </span>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(year <span class="op">&gt;</span><span class="st"> </span><span class="dv">2015</span>)</span>
+<span id="cb50-2"><a href="#cb50-2"></a></span>
+<span id="cb50-3"><a href="#cb50-3"></a><span class="co">#create plot</span></span>
+<span id="cb50-4"><a href="#cb50-4"></a>data2015on <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">fill =</span> program_desc )) <span class="op">+</span></span>
+<span id="cb50-5"><a href="#cb50-5"></a><span class="st">  </span><span class="kw">geom_area</span>(<span class="dt">stat=</span><span class="st">&quot;bin&quot;</span>, <span class="dt">bins =</span> <span class="dv">5</span>)</span></code></pre></div>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p>This is not the best plot type to look at this. Let’s try something else</p>
+</div>
+<div id="scatterplot" class="section level1">
+<h1>Scatterplot</h1>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>cleandata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(program_desc) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">fill =</span> program_desc )) <span class="op">+</span></span>
+<span id="cb51-2"><a href="#cb51-2"></a><span class="st">  </span><span class="kw">geom_density</span>()</span></code></pre></div>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p>This plot looks okay! Let’s try with the data subset. A note: it is hard to visualize all of the categories of publications with this type of plot, especially since there are so many categories.</p>
+</div>
+<div id="plotting-subset-data" class="section level1">
+<h1>Plotting subset data</h1>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a>data2015on <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(program_desc) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">fill =</span> program_desc )) <span class="op">+</span></span>
+<span id="cb52-2"><a href="#cb52-2"></a><span class="st">  </span><span class="kw">geom_density</span>()</span></code></pre></div>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p>The plot is not as informative with this subset.</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a>data2015on <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(program_desc) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">fill =</span> program_desc )) <span class="op">+</span></span>
+<span id="cb53-2"><a href="#cb53-2"></a><span class="st">  </span><span class="kw">geom_freqpoly</span>()</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p>This is pretty funky looking - it would be better if I combined the month and year columns into one single date variable. Or, it may be better as a bar graph.</p>
+</div>
+<div id="mutating-date-variable" class="section level1">
+<h1>Mutating date variable</h1>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a>test &lt;-<span class="st"> </span>cleandata</span>
+<span id="cb55-2"><a href="#cb55-2"></a>test<span class="op">$</span>date &lt;-<span class="st"> </span>zoo<span class="op">::</span><span class="kw">as.yearmon</span>(<span class="kw">paste</span>(test<span class="op">$</span>year, test<span class="op">$</span>month), <span class="st">&quot;%Y %m&quot;</span>)</span>
+<span id="cb55-3"><a href="#cb55-3"></a>tidydate &lt;-<span class="st"> </span>test </span></code></pre></div>
+</div>
+<div id="testing-out-plots-with-new-date-variable" class="section level1">
+<h1>Testing out plots with new date variable</h1>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a><span class="kw">class</span>(tidydate<span class="op">$</span>date)</span></code></pre></div>
+<pre><code>## [1] &quot;yearmon&quot;</code></pre>
+<p>Looks like we’re good to go</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1"></a>tidydate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(year<span class="op">&gt;</span><span class="dv">2015</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(program_desc) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">fill =</span> program_desc )) <span class="op">+</span></span>
+<span id="cb58-2"><a href="#cb58-2"></a><span class="st">  </span><span class="kw">geom_area</span>(<span class="dt">stat=</span><span class="st">&quot;bin&quot;</span>)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a>tidydate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(year<span class="op">&gt;</span><span class="dv">2019</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(program_desc) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">fill =</span> program_desc )) <span class="op">+</span></span>
+<span id="cb60-2"><a href="#cb60-2"></a><span class="st">  </span><span class="kw">geom_area</span>(<span class="dt">stat=</span><span class="st">&quot;bin&quot;</span>) <span class="op">+</span><span class="st"> </span>zoo<span class="op">::</span><span class="kw">scale_x_yearmon</span>(<span class="dt">n=</span><span class="dv">6</span>) <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">45</span>, <span class="dt">hjust=</span><span class="dv">1</span>))</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p>I’m not sure why the x-axis labels are a bit odd. I think I probably should have used lubridate or another way of managing dates instead of the zoo package. But, from this plot we can see how working papers increased following March 2020, the onset of the COVID-19 pandemic. It would be good to include more dates prior to Jan 2020 for comparison.</p>
+</div>
+<div id="expand-range-of-graph" class="section level1">
+<h1>Expand range of graph</h1>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1"></a>tidydate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(year<span class="op">&gt;</span><span class="dv">2015</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(program_desc) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">fill =</span> program_desc )) <span class="op">+</span></span>
+<span id="cb62-2"><a href="#cb62-2"></a><span class="st">  </span><span class="kw">geom_area</span>(<span class="dt">stat=</span><span class="st">&quot;bin&quot;</span>) <span class="op">+</span><span class="st"> </span>zoo<span class="op">::</span><span class="kw">scale_x_yearmon</span>(<span class="dt">n=</span><span class="dv">6</span>) <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">45</span>, <span class="dt">hjust=</span><span class="dv">1</span>))</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<p>We’re definitely still seeing a huge spike when comparing the working paper numbers from a few years prior! That is my key takeaway from this analysis so far. Let’s refine this plot and wrap up.</p>
+</div>
+<div id="customizing-plot" class="section level1">
+<h1>Customizing plot</h1>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1"></a>tidydate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(year<span class="op">&gt;</span><span class="dv">2018</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(program_desc) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">fill =</span> program_desc )) <span class="op">+</span></span>
+<span id="cb64-2"><a href="#cb64-2"></a><span class="st">  </span><span class="kw">geom_area</span>(<span class="dt">stat=</span><span class="st">&quot;bin&quot;</span>, <span class="dt">bins =</span> <span class="dv">30</span>) <span class="op">+</span><span class="st"> </span>zoo<span class="op">::</span><span class="kw">scale_x_yearmon</span>(<span class="dt">n=</span><span class="dv">6</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb64-3"><a href="#cb64-3"></a><span class="st">  </span><span class="kw">theme_economist</span>()<span class="op">+</span></span>
+<span id="cb64-4"><a href="#cb64-4"></a><span class="st">  </span><span class="kw">theme</span>( </span>
+<span id="cb64-5"><a href="#cb64-5"></a>        <span class="dt">legend.key.size =</span> <span class="kw">unit</span>(<span class="fl">0.3</span>, <span class="st">&#39;cm&#39;</span>), </span>
+<span id="cb64-6"><a href="#cb64-6"></a>        <span class="dt">legend.position =</span> <span class="st">&quot;top&quot;</span>, </span>
+<span id="cb64-7"><a href="#cb64-7"></a>        <span class="dt">legend.text =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">5</span>), </span>
+<span id="cb64-8"><a href="#cb64-8"></a>        <span class="dt">legend.title =</span> <span class="kw">element_blank</span>()) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Date&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;No. of Papers&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">annotate</span>(<span class="dt">geom=</span><span class="st">&quot;text&quot;</span>, <span class="dt">x=</span>zoo<span class="op">::</span><span class="kw">as.yearmon</span>(<span class="st">&quot;Mar 2020&quot;</span>), <span class="dt">y=</span><span class="dv">1500</span>, <span class="dt">label=</span><span class="st">&quot;March 2020&quot;</span>, <span class="dt">size=</span><span class="dv">3</span>)<span class="op">+</span></span>
+<span id="cb64-9"><a href="#cb64-9"></a><span class="st">  </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">x=</span>zoo<span class="op">::</span><span class="kw">as.yearmon</span>(<span class="st">&quot;Mar 2020&quot;</span>), <span class="dt">y=</span><span class="dv">1480</span>, <span class="dt">xend =</span> zoo<span class="op">::</span><span class="kw">as.yearmon</span>(<span class="st">&quot;Mar 2020&quot;</span>), <span class="dt">yend =</span> <span class="dv">700</span>), <span class="dt">arrow =</span> <span class="kw">arrow</span>(<span class="dt">length =</span> <span class="kw">unit</span>(<span class="fl">0.2</span>,<span class="st">&quot;cm&quot;</span>)), <span class="dt">size=</span><span class="fl">0.15</span>)<span class="op">+</span></span>
+<span id="cb64-10"><a href="#cb64-10"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;National Bureau of Economic Research Papers By Program&quot;</span>, <span class="st">&quot;Publications Over Time and Throughout a Pandemic&quot;</span>)</span></code></pre></div>
+<p><img src="tidytuesday_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+</div>
 
 
 

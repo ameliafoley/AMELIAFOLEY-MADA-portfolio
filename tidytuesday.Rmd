@@ -5,5 +5,253 @@ output:
     toc: FALSE
 ---
 
-This will contain the future Tidy Tuesday exercise.
+# Loading required packages
+```{r}
+library(tidyverse)
+library(knitr)
+library(here)
+library(dplyr)
+library(scales)
+library(ggthemes)
+```
+
+For this assignment, I will work with the R for Data Science Tidy Tuesday Dataset, week 40 (9/28/2021). 
+
+# Loading data
+```{r}
+
+loc_authors <- here("data","2021-09-28", "authors.csv")
+loc_combo <- here("data","2021-09-28", "combo_df.csv")
+loc_paperauthors <- here("data","2021-09-28", "paper_authors.csv")
+loc_paperprograms <- here("data","2021-09-28", "paper_programs.csv")
+loc_papers <- here("data","2021-09-28", "papers.csv")
+loc_programs <- here("data","2021-09-28", "programs.csv")
+
+
+authors <- read.csv(loc_authors)
+combo <- read.csv(loc_combo)
+paperauthors <- read.csv(loc_paperauthors)
+paperprograms <- read.csv(loc_paperprograms)
+paper <- read.csv(loc_papers)
+programs <- read.csv(loc_programs)
+
+```
+# Take a look at data
+```{r}
+glimpse(authors)
+glimpse(combo)
+glimpse(paperauthors)
+glimpse(paperprograms)
+glimpse(paper)
+glimpse(programs)
+```
+
+After looking at these data files, it looks like we loaded more than we needed. "Combo" represents a combination of the other individual data files. We'll work with that going forward. "Combo" gives us 130,081 observations of 12 variables, so we have a lot to work with. 
+
+# Looking at combo data specifically
+```{r}
+head(combo)
+```
+
+It looks like the columns "user_nber" and "user_repec" may be left over from combining datasets to get authors names. I don't think we'll need these for analysis, so let's remove them. 
+
+# Removing unnessecary variables
+```{r}
+cleandata <- combo %>% select(-"user_nber", -"user_repec")
+```
+
+Even just looking at the top few rows of the combo object, I can see that there are missing values in the program, program description, and program category sections. Let's see how much info is missing. 
+
+```{r}
+is.na(cleandata$program) %>% summary()
+```
+
+This tells us that there are 530 observations out of 129551 that are missing program data. Since this is a relatively small proportion, let's just remove the NA values and see where that gets us. 
+
+# Removing NA values
+```{r}
+cleandata <- cleandata %>% na.omit(program)
+```
+
+# Check for missing values again
+```{r}
+which(is.na(cleandata))
+```
+
+It looks like we have gotten rid of all of the observations with missing info now. Let's look at the data again.
+
+# Check data in the process of cleaning
+```{r}
+head(cleandata)
+```
+
+Since the program column contains the acronym for the corresponding description in the program_desc column, the program_desc column is going to be more informative. I think we can go ahead and remove the program column  as well as the paper and author columns which just contains ids. 
+
+# Removing more variables
+```{r}
+cleandata <- cleandata %>% select(-"paper", -"program")
+```
+
+Another thing I notice is that paper titles are repeated in the dataset since there are multiple authors for some papers. I think this is good since it's already in tidy-ish format. We can see what "number" author a particular author is based on the final digit in the "author" column. Maybe we can alter this variable to keep just that final digit to make it easier to compare author position. 
+
+
+```{r}
+test <- cleandata
+test$author <- sapply(strsplit(as.character(cleandata$author), ".", fixed = TRUE), `[`, 2)
+cleandata <- test 
+```
+
+Okay, I think that last code chunk successfully provided author positions. Now, I see that there are some repeated listings of papers and authors that have been listed under multiple program categories. I'm not sure the best way to approach this, but I think it needs to be addressed because the duplicates could cause issues in analysis. Let's figure out how to subset this data in a way that makes sense. We could use group_by to subset the data further. 
+
+# Checking in on data
+```{r}
+glimpse(cleandata)
+head(cleandata)
+```
+
+# Grouping data
+```{r}
+cleandata %>% group_by(title)
+```
+
+I'm not having a ton of success trying to use group_by with this object. Let's see if we can take advantage of the format the data is in right now and look at publication in different fields (based on program description) over time. Let's look at how many different types of programs and catalouge types we have. 
+
+# Summary of catalouge group and program
+```{r}
+glimpse(cleandata$catalogue_group)
+summary(cleandata$program_desc)
+```
+
+Not sure the best way to get a summary when looking at a character variable. Let's try a plot. I remember a plot from Amanda's visualization last week that could be useful, since it included lots of categories summarized in a legend, and represented values over time. I'll try to create something similar. 
+
+# Plotting publications over time
+```{r}
+cleandata %>% ggplot(aes(x = year, fill = program_desc )) +
+  geom_area(stat="bin", bins = 20)
+```
+
+```{r}
+cleandata %>% ggplot(aes(catalogue_group)) + geom_bar()
+```
+
+The comparison of this category is not very interesting. Let's move on. 
+
+# Comparing program category
+```{r}
+cleandata %>% ggplot(aes(program_category)) + geom_bar()
+```
+
+This figure is a little more informative. There were a lot more publications in the Micro field than Macro and Finance. However, this result could be wonky based on there being duplicate observations for papers encoded as falling under different program descriptions and categories. Maybe we can look into that further later on. 
+
+# Comparing program descriptions
+```{r}
+cleandata %>% ggplot(aes(program_desc)) + geom_bar()
+```
+
+This plot could provide us with some interesting info, but we need to adjust the labels on the x-axis so that they are readable. Found some code from an article at this [link](https://datavizpyr.com/how-to-dodge-overlapping-text-on-x-axis-labels-in-ggplot2/)
+
+# Editing x-axis labels
+```{r}
+cleandata %>% ggplot(aes(program_desc)) + geom_bar() + scale_x_discrete(guide = guide_axis(n.dodge=3))
+```
+
+That's a little better, but not great. 
+
+```{r}
+cleandata %>% ggplot(aes(program_desc)) + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust=1))
+```
+
+
+# Is there a certain month when the most papers are published? 
+```{r}
+cleandata %>% ggplot(aes(x = month, fill = program_desc )) + geom_bar()
+
+```
+
+Looking at the first plot we created, it looks like there was huge peak between 2015 and 2020. Let's look at what subject areas those papers were mostly in. 
+
+# Subsetting data
+```{r}
+data2015on <- cleandata %>% filter(year > 2015)
+
+#create plot
+data2015on %>% ggplot(aes(x = year, fill = program_desc )) +
+  geom_area(stat="bin", bins = 5)
+```
+
+This is not the best plot type to look at this. Let's try something else
+
+# Scatterplot
+```{r}
+cleandata %>% group_by(program_desc) %>% ggplot(aes(x = year, fill = program_desc )) +
+  geom_density()
+```
+
+This plot looks okay! Let's try with the data subset. A note: it is hard to visualize all of the categories of publications with this type of plot, especially since there are so many categories. 
+
+# Plotting subset data
+```{r}
+data2015on %>% group_by(program_desc) %>% ggplot(aes(x = year, fill = program_desc )) +
+  geom_density()
+```
+
+The plot is not as informative with this subset. 
+
+
+```{r}
+data2015on %>% group_by(program_desc) %>% ggplot(aes(x = year, fill = program_desc )) +
+  geom_freqpoly()
+```
+
+This is pretty funky looking - it would be better if I combined the month and year columns into one single date variable. Or, it may be better as a bar graph. 
+
+# Mutating date variable
+```{r}
+test <- cleandata
+test$date <- zoo::as.yearmon(paste(test$year, test$month), "%Y %m")
+tidydate <- test 
+```
+
+# Testing out plots with new date variable
+```{r}
+class(tidydate$date)
+```
+
+Looks like we're good to go
+
+```{r}
+tidydate %>% filter(year>2015) %>% group_by(program_desc) %>% ggplot(aes(x = date, fill = program_desc )) +
+  geom_area(stat="bin")
+```
+
+```{r}
+tidydate %>% filter(year>2019) %>% group_by(program_desc) %>% ggplot(aes(x = date, fill = program_desc )) +
+  geom_area(stat="bin") + zoo::scale_x_yearmon(n=6) + theme(axis.text.x = element_text(angle = 45, hjust=1))
+```
+
+
+I'm not sure why the x-axis labels are a bit odd. I think I probably should have used lubridate or another way of managing dates instead of the zoo package. But, from this plot we can see how working papers increased following March 2020, the onset of the COVID-19 pandemic. It would be good to include more dates prior to Jan 2020 for comparison. 
+
+# Expand range of graph
+```{r}
+tidydate %>% filter(year>2015) %>% group_by(program_desc) %>% ggplot(aes(x = date, fill = program_desc )) +
+  geom_area(stat="bin") + zoo::scale_x_yearmon(n=6) + theme(axis.text.x = element_text(angle = 45, hjust=1))
+```
+
+We're definitely still seeing a huge spike when comparing the working paper numbers from a few years prior! That is my key takeaway from this analysis so far. Let's refine this plot and wrap up. 
+
+# Customizing plot
+```{r}
+tidydate %>% filter(year>2018) %>% group_by(program_desc) %>% ggplot(aes(x = date, fill = program_desc )) +
+  geom_area(stat="bin", bins = 30) + zoo::scale_x_yearmon(n=6) + 
+  theme_economist()+
+  theme( 
+        legend.key.size = unit(0.3, 'cm'), 
+        legend.position = "top", 
+        legend.text = element_text(size=5), 
+        legend.title = element_blank()) + xlab("Date") + ylab("No. of Papers") + annotate(geom="text", x=zoo::as.yearmon("Mar 2020"), y=1500, label="March 2020", size=3)+
+  geom_segment(aes(x=zoo::as.yearmon("Mar 2020"), y=1480, xend = zoo::as.yearmon("Mar 2020"), yend = 700), arrow = arrow(length = unit(0.2,"cm")), size=0.15)+
+  ggtitle("National Bureau of Economic Research Papers By Program", "Publications Over Time and Throughout a Pandemic")
+  
+```
 
