@@ -2,7 +2,7 @@ name: "My Data Analysis Portfolio"
 output_dir: 'docs'
 output:
   html_document:
-    theme: journal
+    theme: sandstone
     highlight: zenburn
     toc: false
 navbar:
@@ -19,6 +19,11 @@ navbar:
           href: ./visualization.html
         - text: "Tidy Tuesday"
           href: ./tidytuesday.html
+        - text: "Tidy Tuesday Exercise 2"
+          href: ./tidytuesday_exercise2.html
+        - text: "A Full Data Analysis"
+          href: ./mach_learn_analysis_copy.html
+
   right:
     - icon: fa-github fa-lg
       href: https://github.com/ameliafoley/AMELIAFOLEY-MADA-portfolio       
