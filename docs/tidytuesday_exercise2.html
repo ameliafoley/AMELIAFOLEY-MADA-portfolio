@@ -43,6 +43,100 @@
     </style>
 
 
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -280,7 +374,1260 @@ $(document).ready(function () {
 </div>
 
 
-<p>To be filled…</p>
+<div id="analyzing-marble-runs" class="section level1">
+<h1>Analyzing Marble Runs!</h1>
+<div id="load-packages-and-data" class="section level2">
+<h2>Load packages and data</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggthemes)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vip)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parsnip)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(recipes)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;magrittr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:rlang&#39;:
+## 
+##     set_names</code></pre>
+<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
+## 
+##     extract</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     set_names</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the Data</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>marbles <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">&#39;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-06-02/marbles.csv&#39;</span>)</span></code></pre></div>
+<pre><code>## Rows: 256 Columns: 14</code></pre>
+<pre><code>## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (9): date, race, site, source, marble_name, team_name, pole, host, notes
+## dbl (5): time_s, points, track_length_m, number_laps, avg_time_lap</code></pre>
+<pre><code>## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Take a look at data</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(marbles)</span></code></pre></div>
+<pre><code>## Rows: 256
+## Columns: 14
+## $ date           &lt;chr&gt; &quot;15-Feb-20&quot;, &quot;15-Feb-20&quot;, &quot;15-Feb-20&quot;, &quot;15-Feb-20&quot;, &quot;15…
+## $ race           &lt;chr&gt; &quot;S1Q1&quot;, &quot;S1Q1&quot;, &quot;S1Q1&quot;, &quot;S1Q1&quot;, &quot;S1Q1&quot;, &quot;S1Q1&quot;, &quot;S1Q1&quot;,…
+## $ site           &lt;chr&gt; &quot;Savage Speedway&quot;, &quot;Savage Speedway&quot;, &quot;Savage Speedway&quot;…
+## $ source         &lt;chr&gt; &quot;https://youtu.be/JtsQ_UydjEI?t=356&quot;, &quot;https://youtu.be…
+## $ marble_name    &lt;chr&gt; &quot;Clementin&quot;, &quot;Starry&quot;, &quot;Momo&quot;, &quot;Yellow&quot;, &quot;Snowy&quot;, &quot;Razz…
+## $ team_name      &lt;chr&gt; &quot;O&#39;rangers&quot;, &quot;Team Galactic&quot;, &quot;Team Momo&quot;, &quot;Mellow Yell…
+## $ time_s         &lt;dbl&gt; 28.11, 28.37, 28.40, 28.70, 28.71, 28.72, 28.96, 29.11,…
+## $ pole           &lt;chr&gt; &quot;P1&quot;, &quot;P2&quot;, &quot;P3&quot;, &quot;P4&quot;, &quot;P5&quot;, &quot;P6&quot;, &quot;P7&quot;, &quot;P8&quot;, &quot;P9&quot;, &quot;…
+## $ points         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+## $ track_length_m &lt;dbl&gt; 12.81, 12.81, 12.81, 12.81, 12.81, 12.81, 12.81, 12.81,…
+## $ number_laps    &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 10,…
+## $ avg_time_lap   &lt;dbl&gt; 28.11, 28.37, 28.40, 28.70, 28.71, 28.72, 28.96, 29.11,…
+## $ host           &lt;chr&gt; &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;…
+## $ notes          &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…</code></pre>
+<p>Here, we see that most of the variables seem appropriately classified as either a character or double. However, the date variable is saved as a character. We might want to convert this to the class date if we look at scores over time, etc.</p>
+<p>There are also some variables that we can probably go ahead and elimiate from our clean dataset, which won’t be informative for our analysis. These include the source and notes column.</p>
+<p>We’ll also want to look at missing variables. It looks like there could be some missing variables in the points column. Does that mean no points were acquired, or is the data truly missing? Should we remove the column, remove the missing observations, or assume that NA points = 0 points?</p>
+</div>
+<div id="checking-out-missing-values" class="section level2">
+<h2>Checking out missing values</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is.na</span>(marbles) <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span></code></pre></div>
+<pre><code>##     date            race            site           source       
+##  Mode :logical   Mode :logical   Mode :logical   Mode :logical  
+##  FALSE:256       FALSE:256       FALSE:256       FALSE:256      
+##                                                                 
+##  marble_name     team_name         time_s           pole        
+##  Mode :logical   Mode :logical   Mode :logical   Mode :logical  
+##  FALSE:256       FALSE:256       FALSE:253       FALSE:128      
+##                                  TRUE :3         TRUE :128      
+##    points        track_length_m  number_laps     avg_time_lap   
+##  Mode :logical   Mode :logical   Mode :logical   Mode :logical  
+##  FALSE:128       FALSE:256       FALSE:256       FALSE:253      
+##  TRUE :128                                       TRUE :3        
+##     host           notes        
+##  Mode :logical   Mode :logical  
+##  FALSE:256       FALSE:7        
+##                  TRUE :249</code></pre>
+<p>There are some missing values in time and average lap time. It may be appropriate to remove these observations. There are substantial missing values for the pole and points variables. If we removed all of these observations, we would decrease our data set size by half. Plus, it looks like observations that have data for pole, are missing data for points, and vice versa.</p>
+<p>However, these variables might be useful for analysis, so we might not want to get rid of them completely.</p>
+<p>I’m not entirely sure how to interpret either the pole or the point information. I think that we can get the information that we need from the time_s and avg_time_lap columns to compare the marbles performance, though. So, we’ll remove pole and point columns.</p>
+</div>
+<div id="cleaning-the-data" class="section level2">
+<h2>Cleaning the data</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove pole, point, source, and notes columns</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> marbles <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="st">&quot;pole&quot;</span>, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                            <span class="sc">-</span><span class="st">&quot;points&quot;</span>, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                            <span class="sc">-</span><span class="st">&quot;source&quot;</span>, </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                            <span class="sc">-</span><span class="st">&quot;notes&quot;</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(clean)</span></code></pre></div>
+<pre><code>## Rows: 256
+## Columns: 10
+## $ date           &lt;chr&gt; &quot;15-Feb-20&quot;, &quot;15-Feb-20&quot;, &quot;15-Feb-20&quot;, &quot;15-Feb-20&quot;, &quot;15…
+## $ race           &lt;chr&gt; &quot;S1Q1&quot;, &quot;S1Q1&quot;, &quot;S1Q1&quot;, &quot;S1Q1&quot;, &quot;S1Q1&quot;, &quot;S1Q1&quot;, &quot;S1Q1&quot;,…
+## $ site           &lt;chr&gt; &quot;Savage Speedway&quot;, &quot;Savage Speedway&quot;, &quot;Savage Speedway&quot;…
+## $ marble_name    &lt;chr&gt; &quot;Clementin&quot;, &quot;Starry&quot;, &quot;Momo&quot;, &quot;Yellow&quot;, &quot;Snowy&quot;, &quot;Razz…
+## $ team_name      &lt;chr&gt; &quot;O&#39;rangers&quot;, &quot;Team Galactic&quot;, &quot;Team Momo&quot;, &quot;Mellow Yell…
+## $ time_s         &lt;dbl&gt; 28.11, 28.37, 28.40, 28.70, 28.71, 28.72, 28.96, 29.11,…
+## $ track_length_m &lt;dbl&gt; 12.81, 12.81, 12.81, 12.81, 12.81, 12.81, 12.81, 12.81,…
+## $ number_laps    &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 10,…
+## $ avg_time_lap   &lt;dbl&gt; 28.11, 28.37, 28.40, 28.70, 28.71, 28.72, 28.96, 29.11,…
+## $ host           &lt;chr&gt; &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;No&quot;, &quot;…</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is.na</span>(clean) <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span></code></pre></div>
+<pre><code>##     date            race            site         marble_name    
+##  Mode :logical   Mode :logical   Mode :logical   Mode :logical  
+##  FALSE:256       FALSE:256       FALSE:256       FALSE:256      
+##                                                                 
+##  team_name         time_s        track_length_m  number_laps    
+##  Mode :logical   Mode :logical   Mode :logical   Mode :logical  
+##  FALSE:256       FALSE:253       FALSE:256       FALSE:256      
+##                  TRUE :3                                        
+##  avg_time_lap       host        
+##  Mode :logical   Mode :logical  
+##  FALSE:253       FALSE:256      
+##  TRUE :3</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove 3 observations with missing values for avg_lap_time and time_s</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> clean <span class="sc">%&gt;%</span> <span class="fu">na.omit</span>()</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>clean<span class="sc">$</span>date <span class="ot">&lt;-</span> lubridate<span class="sc">::</span><span class="fu">dmy</span>(clean<span class="sc">$</span>date) <span class="co">#indate day month year format of input</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> clean <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">date =</span> lubridate<span class="sc">::</span><span class="fu">as_date</span>(date)) <span class="co">#convert chr to date class</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(clean<span class="sc">$</span>date) <span class="co">#double check class conversion worked</span></span></code></pre></div>
+<pre><code>## [1] &quot;Date&quot;</code></pre>
+</div>
+<div id="explore-the-data" class="section level2">
+<h2>Explore the data</h2>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(clean)</span></code></pre></div>
+<pre><code>##       date                race               site           marble_name       
+##  Min.   :2020-02-15   Length:253         Length:253         Length:253        
+##  1st Qu.:2020-02-29   Class :character   Class :character   Class :character  
+##  Median :2020-03-14   Mode  :character   Mode  :character   Mode  :character  
+##  Mean   :2020-03-11                                                           
+##  3rd Qu.:2020-03-28                                                           
+##  Max.   :2020-04-05                                                           
+##   team_name             time_s       track_length_m   number_laps   
+##  Length:253         Min.   : 17.76   Min.   :11.90   Min.   : 1.00  
+##  Class :character   1st Qu.: 28.40   1st Qu.:12.81   1st Qu.: 1.00  
+##  Mode  :character   Median : 36.28   Median :12.84   Median : 1.00  
+##                     Mean   :190.84   Mean   :13.22   Mean   : 6.19  
+##                     3rd Qu.:338.16   3rd Qu.:14.38   3rd Qu.:10.00  
+##                     Max.   :492.01   Max.   :14.55   Max.   :16.00  
+##   avg_time_lap       host          
+##  Min.   :17.76   Length:253        
+##  1st Qu.:25.94   Class :character  
+##  Median :30.05   Mode  :character  
+##  Mean   :29.70                     
+##  3rd Qu.:33.65                     
+##  Max.   :41.62</code></pre>
+<p>This summary tells us that we have records for marble performance throughout differences races (different dates). The races can occur at different sites, and each marble is also associated with a particular team. We know whether or not the marble was part of the hosting team, and we also have the average lap time for each marbles in a given race, as well as the total time a marble took to complete a race and the number of laps in a race.</p>
+<p>We may need to do some pre-processing to determine some stats that allow us to compare model performance, since not all race lengths are the same. We might want to group by race and determine a marble’s rank/place at finish by comparing the times, and we may also want to calculate the average race time for all marbles in a given race to understand whether a marble performs above or below average.</p>
+<p>We also have average time per lap which could be a good comparison. But, lap lengths may differ based on site. We have the track lengths available, so we can calculate marble speed using average time per lap and track length in order to make these values comparable.</p>
+</div>
+<div id="feature-engineeringvariable-creation" class="section level2">
+<h2>Feature engineering/variable creation</h2>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate speed in m/s </span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> clean <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">avg_speed =</span> track_length_m<span class="sc">/</span>avg_time_lap)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate race rank</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> clean <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(race) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                                               <span class="fu">rank</span>(time_s, </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">ties.method =</span> <span class="st">&quot;first&quot;</span>)) <span class="co"># for simplicity we will assign ties to rank the first duplicate first</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate total distance in meters of the race</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> clean <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">dist =</span> track_length_m<span class="sc">*</span>number_laps)</span></code></pre></div>
+</div>
+</div>
+<div id="research-questions" class="section level1">
+<h1>Research questions</h1>
+<p>Now that we have some more informative variables to work with, let’s think about our key research questions.</p>
+<ul>
+<li>Do some marbles inherently perform better than others? Do certain teams perform better than others?</li>
+<li>How does speed change in longer races - increase or decrease?</li>
+<li>Does the hosting team have an advantage - do “host” marbles more often win races than “visitor” marbles?</li>
+</ul>
+<p>These questions boil down to this: <em>outcome of interest</em>: rank, speed <em>predictors</em>: dist, host</p>
+</div>
+<div id="eda" class="section level1">
+<h1>EDA</h1>
+<div id="visualize-with-some-figures" class="section level2">
+<h2>Visualize with some figures</h2>
+<div id="average-performance-of-individual-marbles" class="section level3">
+<h3>Average performance of individual marbles</h3>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(clean, <span class="fu">aes</span>(marble_name, rank)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust=</span><span class="dv">1</span>))</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-6-1.png" width="672" /> ### Average performance of teams</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(clean, <span class="fu">aes</span>(team_name, rank)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust=</span><span class="dv">1</span>))</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-7-1.png" width="672" /> ### Total distance of race and average lap time</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(clean, <span class="fu">aes</span>(dist, avg_time_lap)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-8-1.png" width="672" /> ### Host status and race performance</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(clean, <span class="fu">aes</span>(host, rank)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(clean, <span class="fu">aes</span>(date, rank , <span class="at">color =</span> team_name)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust=</span><span class="dv">1</span>))</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>My original thought was that this plot would let us see the average performance of each team over time, and visualize any patterns. However, this is too busy to be useful/informative.</p>
+</div>
+<div id="how-does-an-marble-teams-performance-change-over-time" class="section level3">
+<h3>How does an marble team’s performance change over time?</h3>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>clean <span class="sc">%&gt;%</span> <span class="fu">filter</span>(team_name <span class="sc">==</span> <span class="st">&quot;Hornets&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(date, rank)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust=</span><span class="dv">1</span>))</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+<div id="does-site-location-impact-marble-speed-do-different-sites-have-different-difficulty-of-track" class="section level3">
+<h3>Does site location impact marble speed? Do different sites have different “difficulty” of track?</h3>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(clean, <span class="fu">aes</span>(site, avg_speed)) <span class="sc">+</span> <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust=</span><span class="dv">1</span>))</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+</div>
+</div>
+<div id="modeling" class="section level1">
+<h1>Modeling</h1>
+<div id="split-into-test-and-train" class="section level2">
+<h2>Split into test and train</h2>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed for reproducible analysis (instead of random subset each time)</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">#subset 3/4 of data as training set</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>data_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(clean, </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">prop =</span> <span class="dv">7</span><span class="sc">/</span><span class="dv">10</span>, </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">strata =</span> <span class="st">&quot;rank&quot;</span>) <span class="co">#stratify by outcome of interest for balanced split</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>                            </span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co">#save sets as data frames</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> <span class="fu">training</span>(data_split)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> <span class="fu">testing</span>(data_split)</span></code></pre></div>
+</div>
+<div id="set-up-cross-validation" class="section level2">
+<h2>Set up cross validation</h2>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">#create folds (resample object)</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>folds <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(train_data, </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">v =</span> <span class="dv">5</span>, </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">repeats =</span> <span class="dv">5</span>,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">strata =</span> <span class="st">&quot;rank&quot;</span>) <span class="co">#folds is set up to perform our CV</span></span></code></pre></div>
+</div>
+<div id="linear-model" class="section level2">
+<h2>Linear model</h2>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">#linear model set up</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>lm_mod <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">set_engine</span>(<span class="st">&#39;lm&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">set_mode</span>(<span class="st">&#39;regression&#39;</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co">#create recipe for data and fitting and make dummy variables</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>rank_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(rank <span class="sc">~</span> ., <span class="at">data =</span> train_data) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal</span>(),</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>             <span class="sc">-</span><span class="fu">all_outcomes</span>()) <span class="sc">%&gt;%</span> <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>()) <span class="sc">%&gt;%</span> <span class="fu">step_unknown</span>()</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co">#create recipe for Lasso and elastic net that exclude character variables   </span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>train_data_2 <span class="ot">&lt;-</span> train_data <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="st">&quot;date&quot;</span>, </span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>                                      <span class="sc">-</span><span class="st">&quot;race&quot;</span>, </span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>                                      <span class="sc">-</span><span class="st">&quot;site&quot;</span>, </span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>                                      <span class="sc">-</span><span class="st">&quot;marble_name&quot;</span>, </span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>                                      <span class="sc">-</span><span class="st">&quot;team_name&quot;</span>, </span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>                                      <span class="sc">-</span><span class="st">&quot;host&quot;</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>                                        )</span></code></pre></div>
+<pre><code>## Adding missing grouping variables: `race`</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>rank_rec_2 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(rank <span class="sc">~</span> ., <span class="at">data =</span> train_data_2) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal</span>(),</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>             <span class="sc">-</span><span class="fu">all_outcomes</span>()) <span class="sc">%&gt;%</span> <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>()) <span class="sc">%&gt;%</span> <span class="fu">step_unknown</span>()</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co">#workflow set up</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>rank_wflow <span class="ot">&lt;-</span> </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(lm_mod) <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(rank_rec)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="co">#use workflow to prepare recipe and train model with predictors</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>rank_fit <span class="ot">&lt;-</span> </span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  rank_wflow <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="at">data =</span> train_data)</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="co">#extract model coefficient</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>rank_fit <span class="sc">%&gt;%</span> <span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span> <span class="fu">tidy</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 77 × 5
+##    term              estimate std.error statistic  p.value
+##    &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)    -142293.    7190.        -19.8  4.84e-40
+##  2 date                 7.72     0.390      19.8  4.43e-40
+##  3 time_s               0.902    0.0607     14.9  3.07e-29
+##  4 track_length_m      82.7      6.78       12.2  6.34e-23
+##  5 number_laps        168.       9.77       17.1  2.18e-34
+##  6 avg_time_lap         0.740    0.662       1.12 2.66e- 1
+##  7 avg_speed         -123.      36.0        -3.41 8.82e- 4
+##  8 dist               -17.2      0.983     -17.5  3.99e-35
+##  9 race_S1Q2         -140.       8.40      -16.7  2.29e-33
+## 10 race_S1Q3          -32.9      4.07       -8.10 4.56e-13
+## # … with 67 more rows</code></pre>
+</div>
+<div id="null-model-performance" class="section level2">
+<h2>Null model performance</h2>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#recipe for null model</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>null_train_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(rank <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> train_data) <span class="co">#predicts mean of outcome</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co">#null model workflow incorporating null model recipe</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>null_wflow <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(lm_mod) <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(null_train_rec)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># I want to check and make sure that the null model worked as it was supposed to, so I want to view the predictions and make sure they are all the mean of the outcome</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="co">#get fit for train data using null workflow</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>nullfittest <span class="ot">&lt;-</span> null_wflow <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="at">data =</span> train_data)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co">#get predictions based on null model</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(nullfittest, train_data)</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>test_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(nullfittest, test_data)</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="co">#the predictions for the train and test data are all the same mean value, so this tells us the null model was set up properly</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="co">#Now, we&#39;ll use fit_resamples based on the tidymodels tutorial for CV/resampling (https://www.tidymodels.org/start/resampling/)</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="co">#fit model with training data</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>null_fit_train <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(null_wflow, <span class="at">resamples =</span> folds)</span></code></pre></div>
+<pre><code>## ! Fold1, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold1, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold1, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold1, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold1, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co">#get results</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>metrics_null_train <span class="ot">&lt;-</span> <span class="fu">collect_metrics</span>(null_fit_train)</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="co">#RMSE for null train fit is 4.492</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="co">#repeat for test data</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>null_test_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(rank <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> test_data) <span class="co">#predicts mean of outcome</span></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>null_test_wflow <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(lm_mod) <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(null_test_rec) <span class="co">#sets workflow with new test recipe</span></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>null_fit_test <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(null_test_wflow, <span class="at">resamples =</span> folds) <span class="co">#performs fit</span></span></code></pre></div>
+<pre><code>## ! Fold1, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold1, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold1, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold1, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold1, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>metrics_null_test <span class="ot">&lt;-</span> <span class="fu">collect_metrics</span>(null_fit_test) <span class="co">#gets fit metrics</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="co">#RMSE for null test fit is 4.492</span></span></code></pre></div>
+</div>
+<div id="decision-tree" class="section level2">
+<h2>Decision tree</h2>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co">#going based off of tidymodels tutorial: tune parameters</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="co">#since we already split our data into test and train sets, we&#39;ll continue to use those here. they are `train_data` and `test_data`</span></span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a><span class="co">#model specification</span></span>
+<span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a>tune_spec <span class="ot">&lt;-</span> </span>
+<span id="cb89-6"><a href="#cb89-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">decision_tree</span>(</span>
+<span id="cb89-7"><a href="#cb89-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost_complexity =</span> <span class="fu">tune</span>(),</span>
+<span id="cb89-8"><a href="#cb89-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">tree_depth =</span> <span class="fu">tune</span>()</span>
+<span id="cb89-9"><a href="#cb89-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-10"><a href="#cb89-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;rpart&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-11"><a href="#cb89-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>)</span>
+<span id="cb89-12"><a href="#cb89-12" aria-hidden="true" tabindex="-1"></a>tune_spec</span></code></pre></div>
+<pre><code>## Decision Tree Model Specification (regression)
+## 
+## Main Arguments:
+##   cost_complexity = tune()
+##   tree_depth = tune()
+## 
+## Computational engine: rpart</code></pre>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="co">#tuning grid specification</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>tree_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(<span class="fu">cost_complexity</span>(),</span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">tree_depth</span>(),</span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">levels =</span> <span class="dv">5</span>)</span>
+<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a>tree_grid</span></code></pre></div>
+<pre><code>## # A tibble: 25 × 2
+##    cost_complexity tree_depth
+##              &lt;dbl&gt;      &lt;int&gt;
+##  1    0.0000000001          1
+##  2    0.0000000178          1
+##  3    0.00000316            1
+##  4    0.000562              1
+##  5    0.1                   1
+##  6    0.0000000001          4
+##  7    0.0000000178          4
+##  8    0.00000316            4
+##  9    0.000562              4
+## 10    0.1                   4
+## # … with 15 more rows</code></pre>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="co">#cross validation</span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>cell_folds <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(train_data, <span class="at">v =</span> <span class="dv">5</span>, <span class="at">repeats =</span> <span class="dv">5</span>, <span class="at">strata =</span> <span class="st">&#39;rank&#39;</span>)</span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a><span class="co">#workflow</span></span>
+<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb93-7"><a href="#cb93-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-8"><a href="#cb93-8" aria-hidden="true" tabindex="-1"></a>tree_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb93-9"><a href="#cb93-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(tune_spec) <span class="sc">%&gt;%</span></span>
+<span id="cb93-10"><a href="#cb93-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(rank_rec)</span>
+<span id="cb93-11"><a href="#cb93-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-12"><a href="#cb93-12" aria-hidden="true" tabindex="-1"></a><span class="co">#model tuning with `tune_grid()`</span></span>
+<span id="cb93-13"><a href="#cb93-13" aria-hidden="true" tabindex="-1"></a>tree_res <span class="ot">&lt;-</span> </span>
+<span id="cb93-14"><a href="#cb93-14" aria-hidden="true" tabindex="-1"></a>  tree_wf <span class="sc">%&gt;%</span> </span>
+<span id="cb93-15"><a href="#cb93-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(</span>
+<span id="cb93-16"><a href="#cb93-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> cell_folds,</span>
+<span id="cb93-17"><a href="#cb93-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid =</span> tree_grid</span>
+<span id="cb93-18"><a href="#cb93-18" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
+<pre><code>## ! Fold1, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat1: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold1, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 1/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 2/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 3/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 4/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 5/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 6/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 7/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 8/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 9/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 10/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 11/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 12/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 13/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 14/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 15/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 16/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 17/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 18/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 19/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 20/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 21/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 22/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 23/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 24/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 25/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat2: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 1/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 2/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 3/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 4/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 5/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 6/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 7/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 8/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 9/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 10/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 11/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 12/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 13/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 14/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 15/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 16/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 17/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 18/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 19/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 20/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 21/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 22/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 23/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 24/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 25/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold3, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat3: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 1/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 2/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 3/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 4/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 5/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 6/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 7/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 8/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 9/25 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 10/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 11/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 12/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 13/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 14/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 15/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 16/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 17/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 18/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 19/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 20/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 21/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 22/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 23/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 24/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 25/25 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## ! Fold4, Repeat4: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold1, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold2, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold3, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<pre><code>## ! Fold5, Repeat5: internal: A correlation computation is required, but `estimate` is const...</code></pre>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="#cb187-1" aria-hidden="true" tabindex="-1"></a>tree_res <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 50 × 8
+##    cost_complexity tree_depth .metric .estimator   mean     n std_err .config   
+##              &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;     
+##  1    0.0000000001          1 rmse    standard   4.64      25 0.0392  Preproces…
+##  2    0.0000000001          1 rsq     standard   0.0369    25 0.00806 Preproces…
+##  3    0.0000000178          1 rmse    standard   4.64      25 0.0392  Preproces…
+##  4    0.0000000178          1 rsq     standard   0.0369    25 0.00806 Preproces…
+##  5    0.00000316            1 rmse    standard   4.64      25 0.0392  Preproces…
+##  6    0.00000316            1 rsq     standard   0.0369    25 0.00806 Preproces…
+##  7    0.000562              1 rmse    standard   4.64      25 0.0392  Preproces…
+##  8    0.000562              1 rsq     standard   0.0369    25 0.00806 Preproces…
+##  9    0.1                   1 rmse    standard   4.67      25 0.0306  Preproces…
+## 10    0.1                   1 rsq     standard   0.0101     7 0.00449 Preproces…
+## # … with 40 more rows</code></pre>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="#cb189-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Here we see 25 candidate models, and the RMSE and Rsq for each</span></span>
+<span id="cb189-2"><a href="#cb189-2" aria-hidden="true" tabindex="-1"></a>tree_res <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>() <span class="co">#view plot</span></span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="#cb190-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select the best decision tree model</span></span>
+<span id="cb190-2"><a href="#cb190-2" aria-hidden="true" tabindex="-1"></a>best_tree <span class="ot">&lt;-</span> tree_res <span class="sc">%&gt;%</span> <span class="fu">select_best</span>(<span class="st">&quot;rmse&quot;</span>)</span>
+<span id="cb190-3"><a href="#cb190-3" aria-hidden="true" tabindex="-1"></a>best_tree <span class="co">#view model details</span></span></code></pre></div>
+<pre><code>## # A tibble: 1 × 3
+##   cost_complexity tree_depth .config              
+##             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;                
+## 1    0.0000000001         11 Preprocessor1_Model16</code></pre>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="#cb192-1" aria-hidden="true" tabindex="-1"></a><span class="co">#finalize model workflow with best model</span></span>
+<span id="cb192-2"><a href="#cb192-2" aria-hidden="true" tabindex="-1"></a>tree_final_wf <span class="ot">&lt;-</span> tree_wf <span class="sc">%&gt;%</span></span>
+<span id="cb192-3"><a href="#cb192-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(best_tree) </span>
+<span id="cb192-4"><a href="#cb192-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb192-5"><a href="#cb192-5" aria-hidden="true" tabindex="-1"></a><span class="co">#fit model</span></span>
+<span id="cb192-6"><a href="#cb192-6" aria-hidden="true" tabindex="-1"></a>tree_fit <span class="ot">&lt;-</span> </span>
+<span id="cb192-7"><a href="#cb192-7" aria-hidden="true" tabindex="-1"></a>  tree_final_wf <span class="sc">%&gt;%</span> <span class="fu">fit</span>(train_data)</span></code></pre></div>
+<div id="decision-tree-plots" class="section level3">
+<h3>Decision tree plots</h3>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="#cb193-1" aria-hidden="true" tabindex="-1"></a><span class="co">#diagnostics</span></span>
+<span id="cb193-2"><a href="#cb193-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(tree_res)</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="#cb194-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate residuals</span></span>
+<span id="cb194-2"><a href="#cb194-2" aria-hidden="true" tabindex="-1"></a>tree_resid <span class="ot">&lt;-</span> tree_fit <span class="sc">%&gt;%</span></span>
+<span id="cb194-3"><a href="#cb194-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train_data) <span class="sc">%&gt;%</span> <span class="co">#this will add predictions to our df</span></span>
+<span id="cb194-4"><a href="#cb194-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.pred, rank) <span class="sc">%&gt;%</span></span>
+<span id="cb194-5"><a href="#cb194-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">.resid =</span> rank <span class="sc">-</span> .pred) <span class="co">#manually calculate residuals</span></span>
+<span id="cb194-6"><a href="#cb194-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-7"><a href="#cb194-7" aria-hidden="true" tabindex="-1"></a><span class="co">#model predictions from tuned model vs actual outcomes</span></span>
+<span id="cb194-8"><a href="#cb194-8" aria-hidden="true" tabindex="-1"></a>tree_pred_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(tree_resid, <span class="fu">aes</span>(<span class="at">x =</span> rank, <span class="at">y =</span> .pred)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb194-9"><a href="#cb194-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Predictions vs Actual Outcomes: Decision Tree&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Rank Outcome&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rank Prediction&quot;</span>)</span>
+<span id="cb194-10"><a href="#cb194-10" aria-hidden="true" tabindex="-1"></a>tree_pred_plot</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="#cb195-1" aria-hidden="true" tabindex="-1"></a><span class="co">#plot residuals vs predictions</span></span>
+<span id="cb195-2"><a href="#cb195-2" aria-hidden="true" tabindex="-1"></a>tree_resid_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(tree_resid, <span class="fu">aes</span>(<span class="at">y =</span> .resid, <span class="at">x =</span> .pred)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb195-3"><a href="#cb195-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Predictions vs Residuals: Decision Tree&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Rank Prediction&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Residuals&quot;</span>)</span>
+<span id="cb195-4"><a href="#cb195-4" aria-hidden="true" tabindex="-1"></a>tree_resid_plot <span class="co">#view plot</span></span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-18-3.png" width="672" /></p>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="#cb196-1" aria-hidden="true" tabindex="-1"></a><span class="co">#compare to null model</span></span>
+<span id="cb196-2"><a href="#cb196-2" aria-hidden="true" tabindex="-1"></a>metrics_null_train <span class="co">#view null RMSE for train data</span></span></code></pre></div>
+<pre><code>## # A tibble: 2 × 6
+##   .metric .estimator   mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard     4.61    25  0.0264 Preprocessor1_Model1
+## 2 rsq     standard   NaN        0 NA      Preprocessor1_Model1</code></pre>
+<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="#cb198-1" aria-hidden="true" tabindex="-1"></a>tree_res <span class="sc">%&gt;%</span> <span class="fu">show_best</span>(<span class="at">n=</span><span class="dv">1</span>) <span class="co">#view RMSE for best decision tree model</span></span></code></pre></div>
+<pre><code>## Warning: No value of `metric` was given; metric &#39;rmse&#39; will be used.</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   cost_complexity tree_depth .metric .estimator  mean     n std_err .config     
+##             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;       
+## 1    0.0000000001         11 rmse    standard    4.30    25  0.0897 Preprocesso…</code></pre>
+<p>Our best decision tree model has a RMSE of 4.115, which is better than the null RMSE of 4.492. Our predictions vs outcomes plots also shows the typical diagonal trend that you want to see, but the points are definitely dispersed and concentrated along the 45 degree line, indicating that the predicitions are not <em>super</em> accurate.</p>
+</div>
+</div>
+<div id="lasso-model" class="section level2">
+<h2>LASSO model</h2>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="#cb201-1" aria-hidden="true" tabindex="-1"></a><span class="co">#based on tidymodels tutorial: case study </span></span>
+<span id="cb201-2"><a href="#cb201-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb201-3"><a href="#cb201-3" aria-hidden="true" tabindex="-1"></a><span class="co">#(Error: not compatible with requested type = character, target = double). I keep getting this error for the lasso model, and after troubleshooting for a few hours, I am lost on what to do. I am pretty sure my character varaibles should be managed by the step_dummy() step in the initial rank_rec recipe, but the models continue to fail. I am not sure what other part of the equation would be considered a character that needs to be converted to numeric.</span></span>
+<span id="cb201-4"><a href="#cb201-4" aria-hidden="true" tabindex="-1"></a><span class="co">#For now, I will create a new recipe that does not include any character variables. This is not ideal because our model won&#39;t reflect patterns related to marble identity, or to host status. </span></span>
+<span id="cb201-5"><a href="#cb201-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb201-6"><a href="#cb201-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb201-7"><a href="#cb201-7" aria-hidden="true" tabindex="-1"></a><span class="co">#model specification (mixture = 1 means using LASSO)</span></span>
+<span id="cb201-8"><a href="#cb201-8" aria-hidden="true" tabindex="-1"></a>lasso <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb201-9"><a href="#cb201-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>) <span class="sc">%&gt;%</span>           </span>
+<span id="cb201-10"><a href="#cb201-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;glmnet&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb201-11"><a href="#cb201-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_args</span>(<span class="at">penalty =</span> <span class="fu">tune</span>(), <span class="at">mixture =</span> <span class="dv">1</span>)</span>
+<span id="cb201-12"><a href="#cb201-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb201-13"><a href="#cb201-13" aria-hidden="true" tabindex="-1"></a><span class="co">#set workflow</span></span>
+<span id="cb201-14"><a href="#cb201-14" aria-hidden="true" tabindex="-1"></a>lasso_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(lasso) <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(rank_rec_2)</span>
+<span id="cb201-15"><a href="#cb201-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb201-16"><a href="#cb201-16" aria-hidden="true" tabindex="-1"></a><span class="co">#tuning grid specification</span></span>
+<span id="cb201-17"><a href="#cb201-17" aria-hidden="true" tabindex="-1"></a>lasso_grid <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">penalty =</span> <span class="dv">10</span><span class="sc">^</span><span class="fu">seq</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="at">length.out =</span> <span class="dv">30</span>))</span>
+<span id="cb201-18"><a href="#cb201-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb201-19"><a href="#cb201-19" aria-hidden="true" tabindex="-1"></a><span class="co">#use function from (https://stackoverflow.com/questions/64519640/error-in-summary-connectionconnection-invalid-connection) to turn of parallel processing that might be causing our error message (Error: All of the models failed. See the .notes column)</span></span>
+<span id="cb201-20"><a href="#cb201-20" aria-hidden="true" tabindex="-1"></a>unregister_dopar <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb201-21"><a href="#cb201-21" aria-hidden="true" tabindex="-1"></a>  env <span class="ot">&lt;-</span> foreach<span class="sc">:::</span>.foreachGlobals</span>
+<span id="cb201-22"><a href="#cb201-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(<span class="at">list=</span><span class="fu">ls</span>(<span class="at">name=</span>env), <span class="at">pos=</span>env)</span>
+<span id="cb201-23"><a href="#cb201-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb201-24"><a href="#cb201-24" aria-hidden="true" tabindex="-1"></a><span class="fu">unregister_dopar</span>()</span>
+<span id="cb201-25"><a href="#cb201-25" aria-hidden="true" tabindex="-1"></a><span class="co">#tuning with CV and tune_grid</span></span>
+<span id="cb201-26"><a href="#cb201-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb201-27"><a href="#cb201-27" aria-hidden="true" tabindex="-1"></a>lasso_res <span class="ot">&lt;-</span> lasso_wf <span class="sc">%&gt;%</span> <span class="fu">tune_grid</span>(<span class="at">resamples =</span> folds, </span>
+<span id="cb201-28"><a href="#cb201-28" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">grid =</span> lasso_grid, </span>
+<span id="cb201-29"><a href="#cb201-29" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">control =</span> <span class="fu">control_grid</span>(<span class="at">save_pred =</span> <span class="cn">TRUE</span>, <span class="at">verbose =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb201-30"><a href="#cb201-30" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">metrics =</span> <span class="fu">metric_set</span>(rmse))</span></code></pre></div>
+<pre><code>## i Fold1, Repeat1: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold1, Repeat1: preprocessor 1/1</code></pre>
+<pre><code>## i Fold1, Repeat1: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold1, Repeat1: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold1, Repeat1: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold2, Repeat1: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold2, Repeat1: preprocessor 1/1</code></pre>
+<pre><code>## i Fold2, Repeat1: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold2, Repeat1: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold2, Repeat1: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold3, Repeat1: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold3, Repeat1: preprocessor 1/1</code></pre>
+<pre><code>## i Fold3, Repeat1: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold3, Repeat1: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold3, Repeat1: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold4, Repeat1: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold4, Repeat1: preprocessor 1/1</code></pre>
+<pre><code>## i Fold4, Repeat1: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold4, Repeat1: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold4, Repeat1: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold5, Repeat1: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold5, Repeat1: preprocessor 1/1</code></pre>
+<pre><code>## i Fold5, Repeat1: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold5, Repeat1: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold5, Repeat1: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold1, Repeat2: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold1, Repeat2: preprocessor 1/1</code></pre>
+<pre><code>## i Fold1, Repeat2: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold1, Repeat2: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold1, Repeat2: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold2, Repeat2: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold2, Repeat2: preprocessor 1/1</code></pre>
+<pre><code>## i Fold2, Repeat2: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold2, Repeat2: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold2, Repeat2: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold3, Repeat2: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold3, Repeat2: preprocessor 1/1</code></pre>
+<pre><code>## i Fold3, Repeat2: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold3, Repeat2: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold3, Repeat2: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold4, Repeat2: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold4, Repeat2: preprocessor 1/1</code></pre>
+<pre><code>## i Fold4, Repeat2: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold4, Repeat2: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold4, Repeat2: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold5, Repeat2: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold5, Repeat2: preprocessor 1/1</code></pre>
+<pre><code>## i Fold5, Repeat2: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold5, Repeat2: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold5, Repeat2: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold1, Repeat3: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold1, Repeat3: preprocessor 1/1</code></pre>
+<pre><code>## i Fold1, Repeat3: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold1, Repeat3: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold1, Repeat3: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold2, Repeat3: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold2, Repeat3: preprocessor 1/1</code></pre>
+<pre><code>## i Fold2, Repeat3: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold2, Repeat3: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold2, Repeat3: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold3, Repeat3: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold3, Repeat3: preprocessor 1/1</code></pre>
+<pre><code>## i Fold3, Repeat3: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold3, Repeat3: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold3, Repeat3: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold4, Repeat3: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold4, Repeat3: preprocessor 1/1</code></pre>
+<pre><code>## i Fold4, Repeat3: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold4, Repeat3: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold4, Repeat3: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold5, Repeat3: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold5, Repeat3: preprocessor 1/1</code></pre>
+<pre><code>## i Fold5, Repeat3: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold5, Repeat3: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold5, Repeat3: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold1, Repeat4: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold1, Repeat4: preprocessor 1/1</code></pre>
+<pre><code>## i Fold1, Repeat4: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold1, Repeat4: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold1, Repeat4: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold2, Repeat4: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold2, Repeat4: preprocessor 1/1</code></pre>
+<pre><code>## i Fold2, Repeat4: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold2, Repeat4: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold2, Repeat4: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold3, Repeat4: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold3, Repeat4: preprocessor 1/1</code></pre>
+<pre><code>## i Fold3, Repeat4: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold3, Repeat4: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold3, Repeat4: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold4, Repeat4: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold4, Repeat4: preprocessor 1/1</code></pre>
+<pre><code>## i Fold4, Repeat4: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold4, Repeat4: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold4, Repeat4: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold5, Repeat4: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold5, Repeat4: preprocessor 1/1</code></pre>
+<pre><code>## i Fold5, Repeat4: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold5, Repeat4: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold5, Repeat4: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold1, Repeat5: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold1, Repeat5: preprocessor 1/1</code></pre>
+<pre><code>## i Fold1, Repeat5: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold1, Repeat5: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold1, Repeat5: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold2, Repeat5: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold2, Repeat5: preprocessor 1/1</code></pre>
+<pre><code>## i Fold2, Repeat5: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold2, Repeat5: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold2, Repeat5: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold3, Repeat5: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold3, Repeat5: preprocessor 1/1</code></pre>
+<pre><code>## i Fold3, Repeat5: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold3, Repeat5: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold3, Repeat5: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold4, Repeat5: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold4, Repeat5: preprocessor 1/1</code></pre>
+<pre><code>## i Fold4, Repeat5: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold4, Repeat5: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold4, Repeat5: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<pre><code>## i Fold5, Repeat5: preprocessor 1/1</code></pre>
+<pre><code>## ✓ Fold5, Repeat5: preprocessor 1/1</code></pre>
+<pre><code>## i Fold5, Repeat5: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## ✓ Fold5, Repeat5: preprocessor 1/1, model 1/1</code></pre>
+<pre><code>## i Fold5, Repeat5: preprocessor 1/1, model 1/1 (predictions)</code></pre>
+<div class="sourceCode" id="cb327"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb327-1"><a href="#cb327-1" aria-hidden="true" tabindex="-1"></a><span class="co">#view model metrics</span></span>
+<span id="cb327-2"><a href="#cb327-2" aria-hidden="true" tabindex="-1"></a>lasso_res <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 30 × 7
+##    penalty .metric .estimator  mean     n std_err .config              
+##      &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+##  1 0.001   rmse    standard    1.86    25  0.0584 Preprocessor1_Model01
+##  2 0.00127 rmse    standard    1.87    25  0.0588 Preprocessor1_Model02
+##  3 0.00161 rmse    standard    1.89    25  0.0591 Preprocessor1_Model03
+##  4 0.00204 rmse    standard    1.91    25  0.0594 Preprocessor1_Model04
+##  5 0.00259 rmse    standard    1.94    25  0.0597 Preprocessor1_Model05
+##  6 0.00329 rmse    standard    1.98    25  0.0599 Preprocessor1_Model06
+##  7 0.00418 rmse    standard    2.05    25  0.0602 Preprocessor1_Model07
+##  8 0.00530 rmse    standard    2.14    25  0.0608 Preprocessor1_Model08
+##  9 0.00672 rmse    standard    2.28    25  0.0626 Preprocessor1_Model09
+## 10 0.00853 rmse    standard    2.48    25  0.0674 Preprocessor1_Model10
+## # … with 20 more rows</code></pre>
+<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="#cb329-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select top models</span></span>
+<span id="cb329-2"><a href="#cb329-2" aria-hidden="true" tabindex="-1"></a>top_lasso <span class="ot">&lt;-</span> </span>
+<span id="cb329-3"><a href="#cb329-3" aria-hidden="true" tabindex="-1"></a>  lasso_res <span class="sc">%&gt;%</span> <span class="fu">show_best</span>(<span class="st">&quot;rmse&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(penalty)</span>
+<span id="cb329-4"><a href="#cb329-4" aria-hidden="true" tabindex="-1"></a>top_lasso <span class="co">#view</span></span></code></pre></div>
+<pre><code>## # A tibble: 5 × 7
+##   penalty .metric .estimator  mean     n std_err .config              
+##     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+## 1 0.001   rmse    standard    1.86    25  0.0584 Preprocessor1_Model01
+## 2 0.00127 rmse    standard    1.87    25  0.0588 Preprocessor1_Model02
+## 3 0.00161 rmse    standard    1.89    25  0.0591 Preprocessor1_Model03
+## 4 0.00204 rmse    standard    1.91    25  0.0594 Preprocessor1_Model04
+## 5 0.00259 rmse    standard    1.94    25  0.0597 Preprocessor1_Model05</code></pre>
+<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="#cb331-1" aria-hidden="true" tabindex="-1"></a><span class="co">#see best lasso</span></span>
+<span id="cb331-2"><a href="#cb331-2" aria-hidden="true" tabindex="-1"></a>best_lasso <span class="ot">&lt;-</span> lasso_res <span class="sc">%&gt;%</span> <span class="fu">select_best</span>()</span>
+<span id="cb331-3"><a href="#cb331-3" aria-hidden="true" tabindex="-1"></a>best_lasso <span class="co">#view</span></span></code></pre></div>
+<pre><code>## # A tibble: 1 × 2
+##   penalty .config              
+##     &lt;dbl&gt; &lt;chr&gt;                
+## 1   0.001 Preprocessor1_Model01</code></pre>
+<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb333-1"><a href="#cb333-1" aria-hidden="true" tabindex="-1"></a><span class="co">#finalize workflow with top model</span></span>
+<span id="cb333-2"><a href="#cb333-2" aria-hidden="true" tabindex="-1"></a>lasso_final_wf <span class="ot">&lt;-</span> lasso_wf <span class="sc">%&gt;%</span> <span class="fu">finalize_workflow</span>(best_lasso)</span>
+<span id="cb333-3"><a href="#cb333-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb333-4"><a href="#cb333-4" aria-hidden="true" tabindex="-1"></a><span class="co">#fit model with finalized WF</span></span>
+<span id="cb333-5"><a href="#cb333-5" aria-hidden="true" tabindex="-1"></a>lasso_fit <span class="ot">&lt;-</span> lasso_final_wf <span class="sc">%&gt;%</span> <span class="fu">fit</span>(train_data)</span>
+<span id="cb333-6"><a href="#cb333-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb333-7"><a href="#cb333-7" aria-hidden="true" tabindex="-1"></a><span class="co">#compare results</span></span>
+<span id="cb333-8"><a href="#cb333-8" aria-hidden="true" tabindex="-1"></a>metrics_null_train <span class="co">#view null RMSE for train data</span></span></code></pre></div>
+<pre><code>## # A tibble: 2 × 6
+##   .metric .estimator   mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard     4.61    25  0.0264 Preprocessor1_Model1
+## 2 rsq     standard   NaN        0 NA      Preprocessor1_Model1</code></pre>
+<div class="sourceCode" id="cb335"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb335-1"><a href="#cb335-1" aria-hidden="true" tabindex="-1"></a>lasso_res <span class="sc">%&gt;%</span> <span class="fu">show_best</span>(<span class="at">n=</span><span class="dv">1</span>) <span class="co">#view RMSE for best decision tree model</span></span></code></pre></div>
+<pre><code>## # A tibble: 1 × 7
+##   penalty .metric .estimator  mean     n std_err .config              
+##     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+## 1   0.001 rmse    standard    1.86    25  0.0584 Preprocessor1_Model01</code></pre>
+<div id="lasso-plots" class="section level3">
+<h3>LASSO plots</h3>
+<div class="sourceCode" id="cb337"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb337-1"><a href="#cb337-1" aria-hidden="true" tabindex="-1"></a><span class="co">#diagnostics</span></span>
+<span id="cb337-2"><a href="#cb337-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(lasso_res)</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<div class="sourceCode" id="cb338"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb338-1"><a href="#cb338-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate residuals</span></span>
+<span id="cb338-2"><a href="#cb338-2" aria-hidden="true" tabindex="-1"></a>lasso_resid <span class="ot">&lt;-</span> lasso_fit <span class="sc">%&gt;%</span></span>
+<span id="cb338-3"><a href="#cb338-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train_data) <span class="sc">%&gt;%</span> <span class="co">#this will add predictions to our df</span></span>
+<span id="cb338-4"><a href="#cb338-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.pred, rank) <span class="sc">%&gt;%</span></span>
+<span id="cb338-5"><a href="#cb338-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">.resid =</span> rank <span class="sc">-</span> .pred) <span class="co">#manually calculate residuals</span></span>
+<span id="cb338-6"><a href="#cb338-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb338-7"><a href="#cb338-7" aria-hidden="true" tabindex="-1"></a><span class="co">#model predictions from tuned model vs actual outcomes</span></span>
+<span id="cb338-8"><a href="#cb338-8" aria-hidden="true" tabindex="-1"></a>lasso_pred_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(lasso_resid, <span class="fu">aes</span>(<span class="at">x =</span> rank, <span class="at">y =</span> .pred)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb338-9"><a href="#cb338-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Predictions vs Actual Outcomes: LASSO&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Rank Outcome&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rank Prediction&quot;</span>)</span>
+<span id="cb338-10"><a href="#cb338-10" aria-hidden="true" tabindex="-1"></a>lasso_pred_plot</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-20-2.png" width="672" /></p>
+<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb339-1"><a href="#cb339-1" aria-hidden="true" tabindex="-1"></a><span class="co">#plot residuals vs predictions</span></span>
+<span id="cb339-2"><a href="#cb339-2" aria-hidden="true" tabindex="-1"></a>lasso_resid_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(lasso_resid, <span class="fu">aes</span>(<span class="at">y =</span> .resid, <span class="at">x =</span> .pred)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb339-3"><a href="#cb339-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Predictions vs Residuals: LASSO&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Rank Prediction&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Residuals&quot;</span>)</span>
+<span id="cb339-4"><a href="#cb339-4" aria-hidden="true" tabindex="-1"></a>lasso_resid_plot <span class="co">#view plot</span></span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-20-3.png" width="672" /></p>
+<div class="sourceCode" id="cb340"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb340-1"><a href="#cb340-1" aria-hidden="true" tabindex="-1"></a><span class="co">#compare to null model</span></span>
+<span id="cb340-2"><a href="#cb340-2" aria-hidden="true" tabindex="-1"></a>metrics_null_train <span class="co">#view null RMSE for train data</span></span></code></pre></div>
+<pre><code>## # A tibble: 2 × 6
+##   .metric .estimator   mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard     4.61    25  0.0264 Preprocessor1_Model1
+## 2 rsq     standard   NaN        0 NA      Preprocessor1_Model1</code></pre>
+<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="#cb342-1" aria-hidden="true" tabindex="-1"></a>lasso_res <span class="sc">%&gt;%</span> <span class="fu">show_best</span>(<span class="at">n=</span><span class="dv">1</span>) <span class="co">#view RMSE for best lasso model</span></span></code></pre></div>
+<pre><code>## # A tibble: 1 × 7
+##   penalty .metric .estimator  mean     n std_err .config              
+##     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+## 1   0.001 rmse    standard    1.86    25  0.0584 Preprocessor1_Model01</code></pre>
+<p>The best lasso plot has an RMSE of 1.86, which is definitely better than both the null model and the decision tree model.The outcomes vs prediction plot looks neat as well, it looks better compared to the decision tree model.</p>
+</div>
+</div>
+<div id="random-forest" class="section level2">
+<h2>Random forest</h2>
+<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="#cb344-1" aria-hidden="true" tabindex="-1"></a><span class="co">#based on tidymodels tutorial: case study</span></span>
+<span id="cb344-2"><a href="#cb344-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb344-3"><a href="#cb344-3" aria-hidden="true" tabindex="-1"></a>cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span>
+<span id="cb344-4"><a href="#cb344-4" aria-hidden="true" tabindex="-1"></a>cores</span></code></pre></div>
+<pre><code>## [1] 8</code></pre>
+<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="#cb346-1" aria-hidden="true" tabindex="-1"></a><span class="co">#return to original linear model recipe</span></span>
+<span id="cb346-2"><a href="#cb346-2" aria-hidden="true" tabindex="-1"></a>rank_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(rank <span class="sc">~</span> ., <span class="at">data =</span> train_data) <span class="sc">%&gt;%</span> </span>
+<span id="cb346-3"><a href="#cb346-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal</span>())</span>
+<span id="cb346-4"><a href="#cb346-4" aria-hidden="true" tabindex="-1"></a><span class="co">#model specification</span></span>
+<span id="cb346-5"><a href="#cb346-5" aria-hidden="true" tabindex="-1"></a>r_forest <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="fu">tune</span>(), <span class="at">min_n =</span> <span class="fu">tune</span>(), <span class="at">trees =</span> <span class="fu">tune</span>()) <span class="sc">%&gt;%</span> <span class="fu">set_engine</span>(<span class="st">&quot;ranger&quot;</span>, <span class="at">num.threads =</span> cores, <span class="at">importance =</span> <span class="st">&quot;permutation&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>)</span>
+<span id="cb346-6"><a href="#cb346-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb346-7"><a href="#cb346-7" aria-hidden="true" tabindex="-1"></a><span class="co">#set workflow</span></span>
+<span id="cb346-8"><a href="#cb346-8" aria-hidden="true" tabindex="-1"></a>r_forest_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(r_forest) <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(rank_rec)</span>
+<span id="cb346-9"><a href="#cb346-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb346-10"><a href="#cb346-10" aria-hidden="true" tabindex="-1"></a><span class="co">#tuning grid specification</span></span>
+<span id="cb346-11"><a href="#cb346-11" aria-hidden="true" tabindex="-1"></a>rf_grid  <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">mtry =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>), <span class="at">min_n =</span> <span class="fu">c</span>(<span class="dv">40</span>,<span class="dv">50</span>,<span class="dv">60</span>), <span class="at">trees =</span> <span class="fu">c</span>(<span class="dv">500</span>,<span class="dv">1000</span>)  )</span>
+<span id="cb346-12"><a href="#cb346-12" aria-hidden="true" tabindex="-1"></a><span class="co">#what we will tune:</span></span>
+<span id="cb346-13"><a href="#cb346-13" aria-hidden="true" tabindex="-1"></a>r_forest <span class="sc">%&gt;%</span> <span class="fu">parameters</span>()</span></code></pre></div>
+<pre><code>## Collection of 3 parameters for tuning
+## 
+##  identifier  type    object
+##        mtry  mtry nparam[?]
+##       trees trees nparam[+]
+##       min_n min_n nparam[+]
+## 
+## Model parameters needing finalization:
+##    # Randomly Selected Predictors (&#39;mtry&#39;)
+## 
+## See `?dials::finalize` or `?dials::update.parameters` for more information.</code></pre>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="#cb348-1" aria-hidden="true" tabindex="-1"></a><span class="co">#tuning with CV and tune_grid</span></span>
+<span id="cb348-2"><a href="#cb348-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb348-3"><a href="#cb348-3" aria-hidden="true" tabindex="-1"></a>r_forest_res <span class="ot">&lt;-</span> </span>
+<span id="cb348-4"><a href="#cb348-4" aria-hidden="true" tabindex="-1"></a>  r_forest_wf <span class="sc">%&gt;%</span></span>
+<span id="cb348-5"><a href="#cb348-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(<span class="at">resamples =</span> cell_folds, </span>
+<span id="cb348-6"><a href="#cb348-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">grid =</span> rf_grid, </span>
+<span id="cb348-7"><a href="#cb348-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">control =</span> <span class="fu">control_grid</span>(<span class="at">save_pred =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb348-8"><a href="#cb348-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">metrics =</span> <span class="fu">metric_set</span>(rmse))</span></code></pre></div>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 1/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 1/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 2/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 2/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 3/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 3/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 4/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 4/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 5/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 5/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 6/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 6/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 7/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 7/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 8/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 8/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 9/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 9/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 10/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 10/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 11/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 11/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 12/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 12/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 13/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 13/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 14/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 14/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 15/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 15/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 16/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 16/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 17/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 17/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 18/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 18/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 19/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 19/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 20/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 20/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 21/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 21/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 22/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 22/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 23/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 23/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat2: preprocessor 1/1, model 24/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat2: preprocessor 1/1, model 24/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 1/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 1/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 2/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 2/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 3/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 3/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 4/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 4/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 5/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 5/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 6/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 6/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 7/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 7/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 8/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 8/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 9/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 9/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 10/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 10/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 11/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 11/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 12/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 12/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 13/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 13/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 14/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 14/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 15/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 15/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 16/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 16/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 17/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 17/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 18/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 18/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 19/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 19/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 20/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 20/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 21/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 21/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 22/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 22/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 23/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 23/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold3, Repeat3: preprocessor 1/1, model 24/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold3, Repeat3: preprocessor 1/1, model 24/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 1/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 1/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 2/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 2/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 3/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 3/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 4/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 4/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 5/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 5/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 6/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 6/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 7/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 7/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 8/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 8/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 9/24 (predictions): There are new levels in a fa...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 9/24 (predictions): Error: Missing data in colum...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 10/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 10/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 11/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 11/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 12/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 12/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 13/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 13/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 14/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 14/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 15/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 15/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 16/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 16/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 17/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 17/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 18/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 18/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 19/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 19/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 20/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 20/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 21/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 21/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 22/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 22/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 23/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 23/24 (predictions): Error: Missing data in colu...</code></pre>
+<pre><code>## ! Fold4, Repeat4: preprocessor 1/1, model 24/24 (predictions): There are new levels in a f...</code></pre>
+<pre><code>## x Fold4, Repeat4: preprocessor 1/1, model 24/24 (predictions): Error: Missing data in colu...</code></pre>
+<div class="sourceCode" id="cb493"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb493-1"><a href="#cb493-1" aria-hidden="true" tabindex="-1"></a><span class="co">#view top models</span></span>
+<span id="cb493-2"><a href="#cb493-2" aria-hidden="true" tabindex="-1"></a>r_forest_res <span class="sc">%&gt;%</span> <span class="fu">show_best</span>(<span class="at">metric =</span> <span class="st">&quot;rmse&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 5 × 9
+##    mtry trees min_n .metric .estimator  mean     n std_err .config              
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+## 1     6  1000    40 rmse    standard    4.38    22  0.0413 Preprocessor1_Model16
+## 2     6   500    40 rmse    standard    4.39    22  0.0428 Preprocessor1_Model04
+## 3     5  1000    40 rmse    standard    4.40    22  0.0380 Preprocessor1_Model15
+## 4     5   500    40 rmse    standard    4.42    22  0.0406 Preprocessor1_Model03
+## 5     6  1000    50 rmse    standard    4.42    22  0.0395 Preprocessor1_Model20</code></pre>
+<div class="sourceCode" id="cb495"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb495-1"><a href="#cb495-1" aria-hidden="true" tabindex="-1"></a><span class="co">#view plot of models performance</span></span>
+<span id="cb495-2"><a href="#cb495-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(r_forest_res)</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<div class="sourceCode" id="cb496"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb496-1"><a href="#cb496-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select best model</span></span>
+<span id="cb496-2"><a href="#cb496-2" aria-hidden="true" tabindex="-1"></a>rf_best <span class="ot">&lt;-</span> r_forest_res <span class="sc">%&gt;%</span> <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">&quot;rmse&quot;</span>)</span>
+<span id="cb496-3"><a href="#cb496-3" aria-hidden="true" tabindex="-1"></a>rf_best</span></code></pre></div>
+<pre><code>## # A tibble: 1 × 4
+##    mtry trees min_n .config              
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                
+## 1     6  1000    40 Preprocessor1_Model16</code></pre>
+<div class="sourceCode" id="cb498"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb498-1"><a href="#cb498-1" aria-hidden="true" tabindex="-1"></a><span class="co">#finalize workflow with top model</span></span>
+<span id="cb498-2"><a href="#cb498-2" aria-hidden="true" tabindex="-1"></a>rf_final_wf <span class="ot">&lt;-</span> r_forest_wf <span class="sc">%&gt;%</span> <span class="fu">finalize_workflow</span>(rf_best)</span>
+<span id="cb498-3"><a href="#cb498-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb498-4"><a href="#cb498-4" aria-hidden="true" tabindex="-1"></a><span class="co">#fit model with finalized WF</span></span>
+<span id="cb498-5"><a href="#cb498-5" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="ot">&lt;-</span> rf_final_wf <span class="sc">%&gt;%</span> <span class="fu">fit</span>(train_data)</span></code></pre></div>
+<div id="random-forest-plots" class="section level3">
+<h3>Random forest plots</h3>
+<div class="sourceCode" id="cb499"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb499-1"><a href="#cb499-1" aria-hidden="true" tabindex="-1"></a><span class="co">#diagnostics</span></span>
+<span id="cb499-2"><a href="#cb499-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(r_forest_res)</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<div class="sourceCode" id="cb500"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb500-1"><a href="#cb500-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate residuals</span></span>
+<span id="cb500-2"><a href="#cb500-2" aria-hidden="true" tabindex="-1"></a>rf_resid <span class="ot">&lt;-</span> rf_fit <span class="sc">%&gt;%</span></span>
+<span id="cb500-3"><a href="#cb500-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train_data) <span class="sc">%&gt;%</span> <span class="co">#this will add predictions to our df</span></span>
+<span id="cb500-4"><a href="#cb500-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.pred, rank) <span class="sc">%&gt;%</span></span>
+<span id="cb500-5"><a href="#cb500-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">.resid =</span> rank <span class="sc">-</span> .pred) <span class="co">#manually calculate residuals</span></span>
+<span id="cb500-6"><a href="#cb500-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb500-7"><a href="#cb500-7" aria-hidden="true" tabindex="-1"></a><span class="co">#model predictions from tuned model vs actual outcomes</span></span>
+<span id="cb500-8"><a href="#cb500-8" aria-hidden="true" tabindex="-1"></a>rf_pred_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(rf_resid, <span class="fu">aes</span>(<span class="at">x =</span> rank, <span class="at">y =</span> .pred)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb500-9"><a href="#cb500-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Predictions vs Actual Outcomes: Random Forest&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Rank Outcome&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rank Prediction&quot;</span>)</span>
+<span id="cb500-10"><a href="#cb500-10" aria-hidden="true" tabindex="-1"></a>rf_pred_plot</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-22-2.png" width="672" /></p>
+<div class="sourceCode" id="cb501"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb501-1"><a href="#cb501-1" aria-hidden="true" tabindex="-1"></a><span class="co">#plot residuals vs predictions</span></span>
+<span id="cb501-2"><a href="#cb501-2" aria-hidden="true" tabindex="-1"></a>rf_resid_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(rf_resid, <span class="fu">aes</span>(<span class="at">y =</span> .resid, <span class="at">x =</span> .pred)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb501-3"><a href="#cb501-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Predictions vs Actual Outcomes: Random Forest&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Rank Prediction&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Residuals&quot;</span>)</span>
+<span id="cb501-4"><a href="#cb501-4" aria-hidden="true" tabindex="-1"></a>rf_resid_plot <span class="co">#view plot</span></span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-22-3.png" width="672" /></p>
+<div class="sourceCode" id="cb502"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb502-1"><a href="#cb502-1" aria-hidden="true" tabindex="-1"></a><span class="co">#compare to null model</span></span>
+<span id="cb502-2"><a href="#cb502-2" aria-hidden="true" tabindex="-1"></a>metrics_null_train <span class="co">#view null RMSE for train data</span></span></code></pre></div>
+<pre><code>## # A tibble: 2 × 6
+##   .metric .estimator   mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard     4.61    25  0.0264 Preprocessor1_Model1
+## 2 rsq     standard   NaN        0 NA      Preprocessor1_Model1</code></pre>
+<div class="sourceCode" id="cb504"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb504-1"><a href="#cb504-1" aria-hidden="true" tabindex="-1"></a>r_forest_res <span class="sc">%&gt;%</span> <span class="fu">show_best</span>(<span class="at">n=</span><span class="dv">1</span>) <span class="co">#view RMSE for best decision tree model</span></span></code></pre></div>
+<pre><code>## # A tibble: 1 × 9
+##    mtry trees min_n .metric .estimator  mean     n std_err .config              
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+## 1     6  1000    40 rmse    standard    4.38    22  0.0413 Preprocessor1_Model16</code></pre>
+<p>Here, we see that the best random forest model has an RMSE of 4.06, and the plot of predictions vs outcomes follows the ideal digonal line - it also looks a little cleaner than the decision tree did. Similarly, the random forest RMSE is better than the decision tree RMSE (4.06 compares to 4.115) - but this is not a huge difference.</p>
+</div>
+</div>
+<div id="elastic-net" class="section level2">
+<h2>Elastic net</h2>
+<div class="sourceCode" id="cb506"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb506-1"><a href="#cb506-1" aria-hidden="true" tabindex="-1"></a><span class="co">#based on this tutorial: (https://www.kaggle.com/issactoast/elastic-net-tunning-with-tidymodels)</span></span>
+<span id="cb506-2"><a href="#cb506-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb506-3"><a href="#cb506-3" aria-hidden="true" tabindex="-1"></a><span class="co">#elastic net model specification/tuning specification</span></span>
+<span id="cb506-4"><a href="#cb506-4" aria-hidden="true" tabindex="-1"></a>tune_spec <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>(<span class="at">penalty =</span> <span class="fu">tune</span>(),</span>
+<span id="cb506-5"><a href="#cb506-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">mixture =</span> <span class="fu">tune</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb506-6"><a href="#cb506-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;glmnet&quot;</span>)</span>
+<span id="cb506-7"><a href="#cb506-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb506-8"><a href="#cb506-8" aria-hidden="true" tabindex="-1"></a>param_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(<span class="fu">penalty</span>(), </span>
+<span id="cb506-9"><a href="#cb506-9" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">mixture</span>(),</span>
+<span id="cb506-10"><a href="#cb506-10" aria-hidden="true" tabindex="-1"></a>                            <span class="at">levels =</span> <span class="fu">list</span>(<span class="at">penalty =</span> <span class="dv">100</span>,</span>
+<span id="cb506-11"><a href="#cb506-11" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">mixture =</span> <span class="dv">10</span>))</span>
+<span id="cb506-12"><a href="#cb506-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb506-13"><a href="#cb506-13" aria-hidden="true" tabindex="-1"></a><span class="co">#set workflow</span></span>
+<span id="cb506-14"><a href="#cb506-14" aria-hidden="true" tabindex="-1"></a>net_workflow <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb506-15"><a href="#cb506-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(tune_spec) <span class="sc">%&gt;%</span> </span>
+<span id="cb506-16"><a href="#cb506-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(rank_rec_2)</span>
+<span id="cb506-17"><a href="#cb506-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb506-18"><a href="#cb506-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb506-19"><a href="#cb506-19" aria-hidden="true" tabindex="-1"></a><span class="co">#tuning with CV and tune_grid</span></span>
+<span id="cb506-20"><a href="#cb506-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
+<span id="cb506-21"><a href="#cb506-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb506-22"><a href="#cb506-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb506-23"><a href="#cb506-23" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb506-24"><a href="#cb506-24" aria-hidden="true" tabindex="-1"></a>tune_result <span class="ot">&lt;-</span> net_workflow <span class="sc">%&gt;%</span> </span>
+<span id="cb506-25"><a href="#cb506-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(folds,</span>
+<span id="cb506-26"><a href="#cb506-26" aria-hidden="true" tabindex="-1"></a>            <span class="at">grid =</span> param_grid,</span>
+<span id="cb506-27"><a href="#cb506-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">metrics =</span> <span class="fu">metric_set</span>(rmse))</span>
+<span id="cb506-28"><a href="#cb506-28" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code></pre></div>
+<pre><code>## 94.321 sec elapsed</code></pre>
+<div class="sourceCode" id="cb508"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb508-1"><a href="#cb508-1" aria-hidden="true" tabindex="-1"></a>tune_result <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 1,000 × 8
+##     penalty mixture .metric .estimator  mean     n std_err .config              
+##       &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+##  1 1   e-10       0 rmse    standard    3.44    25  0.0489 Preprocessor1_Model0…
+##  2 1.26e-10       0 rmse    standard    3.44    25  0.0489 Preprocessor1_Model0…
+##  3 1.59e-10       0 rmse    standard    3.44    25  0.0489 Preprocessor1_Model0…
+##  4 2.01e-10       0 rmse    standard    3.44    25  0.0489 Preprocessor1_Model0…
+##  5 2.54e-10       0 rmse    standard    3.44    25  0.0489 Preprocessor1_Model0…
+##  6 3.20e-10       0 rmse    standard    3.44    25  0.0489 Preprocessor1_Model0…
+##  7 4.04e-10       0 rmse    standard    3.44    25  0.0489 Preprocessor1_Model0…
+##  8 5.09e-10       0 rmse    standard    3.44    25  0.0489 Preprocessor1_Model0…
+##  9 6.43e-10       0 rmse    standard    3.44    25  0.0489 Preprocessor1_Model0…
+## 10 8.11e-10       0 rmse    standard    3.44    25  0.0489 Preprocessor1_Model0…
+## # … with 990 more rows</code></pre>
+<div class="sourceCode" id="cb510"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb510-1"><a href="#cb510-1" aria-hidden="true" tabindex="-1"></a><span class="co">#view top models</span></span>
+<span id="cb510-2"><a href="#cb510-2" aria-hidden="true" tabindex="-1"></a>tune_result <span class="sc">%&gt;%</span> <span class="fu">show_best</span>(<span class="at">metric =</span> <span class="st">&quot;rmse&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 5 × 8
+##    penalty mixture .metric .estimator  mean     n std_err .config               
+##      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                 
+## 1 1   e-10       1 rmse    standard    1.84    25  0.0567 Preprocessor1_Model09…
+## 2 1.26e-10       1 rmse    standard    1.84    25  0.0567 Preprocessor1_Model09…
+## 3 1.59e-10       1 rmse    standard    1.84    25  0.0567 Preprocessor1_Model09…
+## 4 2.01e-10       1 rmse    standard    1.84    25  0.0567 Preprocessor1_Model09…
+## 5 2.54e-10       1 rmse    standard    1.84    25  0.0567 Preprocessor1_Model09…</code></pre>
+<div class="sourceCode" id="cb512"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb512-1"><a href="#cb512-1" aria-hidden="true" tabindex="-1"></a><span class="co">#view plot of models performance</span></span>
+<span id="cb512-2"><a href="#cb512-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(tune_result)</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<div class="sourceCode" id="cb513"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb513-1"><a href="#cb513-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select best model</span></span>
+<span id="cb513-2"><a href="#cb513-2" aria-hidden="true" tabindex="-1"></a>net_best <span class="ot">&lt;-</span> tune_result <span class="sc">%&gt;%</span> <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">&quot;rmse&quot;</span>)</span>
+<span id="cb513-3"><a href="#cb513-3" aria-hidden="true" tabindex="-1"></a>net_best</span></code></pre></div>
+<pre><code>## # A tibble: 1 × 3
+##        penalty mixture .config                
+##          &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                  
+## 1 0.0000000001       1 Preprocessor1_Model0901</code></pre>
+<div class="sourceCode" id="cb515"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb515-1"><a href="#cb515-1" aria-hidden="true" tabindex="-1"></a><span class="co">#finalize workflow with top model</span></span>
+<span id="cb515-2"><a href="#cb515-2" aria-hidden="true" tabindex="-1"></a>net_final_wf <span class="ot">&lt;-</span> net_workflow <span class="sc">%&gt;%</span> <span class="fu">finalize_workflow</span>(net_best)</span>
+<span id="cb515-3"><a href="#cb515-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb515-4"><a href="#cb515-4" aria-hidden="true" tabindex="-1"></a><span class="co">#fit model with finalized WF</span></span>
+<span id="cb515-5"><a href="#cb515-5" aria-hidden="true" tabindex="-1"></a>net_fit <span class="ot">&lt;-</span> net_final_wf <span class="sc">%&gt;%</span> <span class="fu">fit</span>(train_data)</span></code></pre></div>
+<div id="elastic-net-plots" class="section level3">
+<h3>Elastic net plots</h3>
+<div class="sourceCode" id="cb516"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb516-1"><a href="#cb516-1" aria-hidden="true" tabindex="-1"></a><span class="co">#diagnostics</span></span>
+<span id="cb516-2"><a href="#cb516-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(tune_result)</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<div class="sourceCode" id="cb517"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb517-1"><a href="#cb517-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate residuals</span></span>
+<span id="cb517-2"><a href="#cb517-2" aria-hidden="true" tabindex="-1"></a>net_resid <span class="ot">&lt;-</span> net_fit <span class="sc">%&gt;%</span></span>
+<span id="cb517-3"><a href="#cb517-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train_data) <span class="sc">%&gt;%</span> <span class="co">#this will add predictions to our df</span></span>
+<span id="cb517-4"><a href="#cb517-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.pred, rank) <span class="sc">%&gt;%</span></span>
+<span id="cb517-5"><a href="#cb517-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">.resid =</span> rank <span class="sc">-</span> .pred) <span class="co">#manually calculate residuals</span></span>
+<span id="cb517-6"><a href="#cb517-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb517-7"><a href="#cb517-7" aria-hidden="true" tabindex="-1"></a><span class="co">#model predictions from tuned model vs actual outcomes</span></span>
+<span id="cb517-8"><a href="#cb517-8" aria-hidden="true" tabindex="-1"></a>net_pred_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(net_resid, <span class="fu">aes</span>(<span class="at">x =</span> rank, <span class="at">y =</span> .pred)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb517-9"><a href="#cb517-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Predictions vs Actual Outcomes: Elastic Net&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Rank Outcome&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rank Prediction&quot;</span>)</span>
+<span id="cb517-10"><a href="#cb517-10" aria-hidden="true" tabindex="-1"></a>net_pred_plot</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-24-2.png" width="672" /></p>
+<div class="sourceCode" id="cb518"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb518-1"><a href="#cb518-1" aria-hidden="true" tabindex="-1"></a><span class="co">#plot residuals vs predictions</span></span>
+<span id="cb518-2"><a href="#cb518-2" aria-hidden="true" tabindex="-1"></a>net_resid_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(net_resid, <span class="fu">aes</span>(<span class="at">y =</span> .resid, <span class="at">x =</span> .pred)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb518-3"><a href="#cb518-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Predictions vs Actual Outcomes: Elastic Net&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Rank Prediction&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Residuals&quot;</span>)</span>
+<span id="cb518-4"><a href="#cb518-4" aria-hidden="true" tabindex="-1"></a>net_resid_plot <span class="co">#view plot</span></span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-24-3.png" width="672" /></p>
+<div class="sourceCode" id="cb519"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb519-1"><a href="#cb519-1" aria-hidden="true" tabindex="-1"></a><span class="co">#compare to null model</span></span>
+<span id="cb519-2"><a href="#cb519-2" aria-hidden="true" tabindex="-1"></a>metrics_null_train <span class="co">#view null RMSE for train data</span></span></code></pre></div>
+<pre><code>## # A tibble: 2 × 6
+##   .metric .estimator   mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard     4.61    25  0.0264 Preprocessor1_Model1
+## 2 rsq     standard   NaN        0 NA      Preprocessor1_Model1</code></pre>
+<div class="sourceCode" id="cb521"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb521-1"><a href="#cb521-1" aria-hidden="true" tabindex="-1"></a>tune_result <span class="sc">%&gt;%</span> <span class="fu">show_best</span>(<span class="at">n=</span><span class="dv">1</span>) <span class="co">#view RMSE for best decision tree model</span></span></code></pre></div>
+<pre><code>## # A tibble: 1 × 8
+##        penalty mixture .metric .estimator  mean     n std_err .config           
+##          &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;             
+## 1 0.0000000001       1 rmse    standard    1.84    25  0.0567 Preprocessor1_Mod…</code></pre>
+<p>Here, we see a decent looking outcomes vs prediction plot. The RMSE for the best elastic net model is 1.84. So far, this is technically the best RMSE, since it is lower that the RMSE for the decision tree, lasso, and random forest models. However, we have to consider that there are fewer variables included in the lasso and elastic net models, since there were continual error messages about passing character variables through the model despite the use of the step_dummy() function to convert nominal variables into multiple seperate variables with binary outcomes.</p>
+<p>The more informative models might be the decision tree and random forest models, since they include qualitative predictions like team, individual marble, and host status. The lasso and elastic net models only include quantitative predictors such as number of laps, avg time per lap, speed, etc. While these could be informative to determine rank post-race, they wouldn’t be very predictive of marble performance pre-race (in an instance where you want to “bet” on a certain outcome, etc.)</p>
+<p>The <em>random forest</em> model has a better RMSE than the decision tree, so that will be the model we select as the best in this case.</p>
+</div>
+</div>
+<div id="evaluate-selected-model-with-test-data" class="section level2">
+<h2>Evaluate selected model with <em>test</em> data</h2>
+<div class="sourceCode" id="cb523"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb523-1"><a href="#cb523-1" aria-hidden="true" tabindex="-1"></a><span class="co">#We&#39;ve selected the random forest model. Let&#39;s evaluate it with the test data. </span></span>
+<span id="cb523-2"><a href="#cb523-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb523-3"><a href="#cb523-3" aria-hidden="true" tabindex="-1"></a><span class="co">#fit to test data</span></span>
+<span id="cb523-4"><a href="#cb523-4" aria-hidden="true" tabindex="-1"></a>last_rf_fit <span class="ot">&lt;-</span> rf_final_wf <span class="sc">%&gt;%</span> <span class="fu">last_fit</span>(data_split)</span>
+<span id="cb523-5"><a href="#cb523-5" aria-hidden="true" tabindex="-1"></a>last_rf_fit <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 2 × 4
+##   .metric .estimator .estimate .config             
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard       4.01  Preprocessor1_Model1
+## 2 rsq     standard       0.231 Preprocessor1_Model1</code></pre>
+<p>By using the <code>last_fit()</code> function, we can see that the RMSE for the model run on the test data is 4.00, which is just as good (actually slightly better) than the RMSE for the random forest model intially built with the train data. This indicates decent model performance. Now, let’s look at some diagnostic plots.</p>
+</div>
+<div id="final-model-diagnosticsplots" class="section level2">
+<h2>Final model diagnostics/plots</h2>
+<div class="sourceCode" id="cb525"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb525-1"><a href="#cb525-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate residuals</span></span>
+<span id="cb525-2"><a href="#cb525-2" aria-hidden="true" tabindex="-1"></a>final_resid <span class="ot">&lt;-</span> last_rf_fit <span class="sc">%&gt;%</span></span>
+<span id="cb525-3"><a href="#cb525-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>() <span class="sc">%&gt;%</span> <span class="co">#this will add predictions to our df</span></span>
+<span id="cb525-4"><a href="#cb525-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.pred, rank) <span class="sc">%&gt;%</span></span>
+<span id="cb525-5"><a href="#cb525-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">.resid =</span> rank <span class="sc">-</span> .pred) <span class="co">#manually calculate residuals</span></span></code></pre></div>
+<pre><code>## Adding missing grouping variables: `race`</code></pre>
+<div class="sourceCode" id="cb527"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb527-1"><a href="#cb527-1" aria-hidden="true" tabindex="-1"></a><span class="co">#model predictions from tuned model vs actual outcomes</span></span>
+<span id="cb527-2"><a href="#cb527-2" aria-hidden="true" tabindex="-1"></a>final_pred_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(final_resid, <span class="fu">aes</span>(<span class="at">x =</span> rank, <span class="at">y =</span> .pred)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb527-3"><a href="#cb527-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Predictions vs Actual Outcomes: Random Forest&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Rank Outcome&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rank Prediction&quot;</span>)</span>
+<span id="cb527-4"><a href="#cb527-4" aria-hidden="true" tabindex="-1"></a>final_pred_plot</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<div class="sourceCode" id="cb528"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb528-1"><a href="#cb528-1" aria-hidden="true" tabindex="-1"></a><span class="co">#plot residuals vs predictions</span></span>
+<span id="cb528-2"><a href="#cb528-2" aria-hidden="true" tabindex="-1"></a>final_resid_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(final_resid, <span class="fu">aes</span>(<span class="at">y =</span> .resid, <span class="at">x =</span> .pred)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb528-3"><a href="#cb528-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Predictions vs Residuals: Random Forest&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Residuals&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Rank Prediction&quot;</span>)</span>
+<span id="cb528-4"><a href="#cb528-4" aria-hidden="true" tabindex="-1"></a>final_resid_plot <span class="co">#view plot</span></span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-26-2.png" width="672" /></p>
+<div class="sourceCode" id="cb529"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb529-1"><a href="#cb529-1" aria-hidden="true" tabindex="-1"></a><span class="co">#compare to null model</span></span>
+<span id="cb529-2"><a href="#cb529-2" aria-hidden="true" tabindex="-1"></a>metrics_null_train <span class="co">#view null RMSE for train data</span></span></code></pre></div>
+<pre><code>## # A tibble: 2 × 6
+##   .metric .estimator   mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard     4.61    25  0.0264 Preprocessor1_Model1
+## 2 rsq     standard   NaN        0 NA      Preprocessor1_Model1</code></pre>
+<div class="sourceCode" id="cb531"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb531-1"><a href="#cb531-1" aria-hidden="true" tabindex="-1"></a>last_rf_fit <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>() <span class="co">#view RMSE for final model</span></span></code></pre></div>
+<pre><code>## # A tibble: 2 × 4
+##   .metric .estimator .estimate .config             
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard       4.01  Preprocessor1_Model1
+## 2 rsq     standard       0.231 Preprocessor1_Model1</code></pre>
+<p>In the outcomes vs predictions plot for the final random forest fit, we see a general diagnoal trend in the plot, though this indicates our predictions are not great. However, I think that the random forest model is decent, with an improved RMSE (4.0) from the null model RMSE (4.6).</p>
+<p>Finally, let’s visualize variable importance scores using the <code>vip</code> package to see which predictors are most indicative of marble performance, measured via rank.</p>
+<div id="variable-importance-for-final-random-forest-model" class="section level3">
+<h3>Variable importance for final random forest model</h3>
+<div class="sourceCode" id="cb533"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb533-1"><a href="#cb533-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parsnip)</span>
+<span id="cb533-2"><a href="#cb533-2" aria-hidden="true" tabindex="-1"></a>last_rf_fit <span class="sc">%&gt;%</span> </span>
+<span id="cb533-3"><a href="#cb533-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pluck</span>(<span class="st">&quot;.workflow&quot;</span>, <span class="dv">1</span>) <span class="sc">%&gt;%</span>   </span>
+<span id="cb533-4"><a href="#cb533-4" aria-hidden="true" tabindex="-1"></a>  workflows<span class="sc">::</span><span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb533-5"><a href="#cb533-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">20</span>)</span></code></pre></div>
+<p><img src="tidytuesday_exercise2_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p>Here, we have a visual representation of our model, ranking the variables with the biggest impact on our key outocme, rank, which measures marble performance. Some interesting things to note are that the team Hazers, the marbles Smoggy, Sublime, Prim, and Mary had “consistent” enough performances that the identity of the marbles themselves seem to be somewhat predictive of performance, though the most important predictor variable is average speed, which is to be expected.</p>
+</div>
+</div>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>In this assignment, I began by checking out the marble dataset. I saw that there were both character variables and numeric variables, some useful and some not. I cleaned the data by removed variables with too many missing values, such as “pole” and “notes” as well as variables that were not informative, such as “source” which just contained linked to the Youtube videos of the marble races.</p>
+<p>Then, I realized that I would need to do some feature engineering/variable creation to give me some comparable metrics for marble performance, such as average total speed and rank (place at race finish). After doing that, I formulated my research questions, which related to whether some marbles inherently perform better than others, and how factors such as host status impact marble performance. My main outcomes of interest then became rank and speed, with main predictors being distance and host status.</p>
+<p>In the EDA, I looked at box plots of individual marble performance, as well as team performance. It seemed that some marbles <em>did</em> have a tendency to rank lower or higher than others. It appeared that there was not a relationship between total race distance and lap time, and a box plot comparison of host status and rank performance showed that there may be a slight correlation between host status and race performance (non-hosts tended to finish with better ranks (lower = better). I also attempted to check out marble team performance trends over time throughout the qualifying races, but ended up with a busy plot that was not too informative. I created a few more EDA plots but continued on to modeling with the key question of which predictors impact final rank.</p>
+<p>I began with the null model, which had an RMSE of 4.49. I built four models in total: decision tree (RMSE = 4.115), lasso (RMSE = 1.86), random forest (RMSE = 4.06), and elastic net (RMSE = 1.84). However, I encountered issues with the lasso and elastic net models, containing to get an error message (Error: not compatible with requested type = character, target = double). I spent a good bit of time troubleshooting and was unsure of the problem (I used step_dummy() to convert nominal variables to usable variables for modeling, so I wasn’t sure what other component was a character that would mess with the model). Ultimately, I created a new dataset with the character variables removed. This is not ideal because it relies only on numeric variables which are mostly available post-race, and not pre-race, meaning they would not be very applicable to predicting marble performance in reality.</p>
+<p>For this reason, I selected the the random forest model, which includes some nominal predictors - I think this makes the model more useful. After running the selected model on the test data and getting decent results, I examined variable importance and saw some interesting patterns: average speed, total time, and avg_time_lap where very important predictors, but there were also several teams and individual marbles that were important in predicting outcomes. So, I think this somewhat answers my initial research question of if individual marbles inherently perform better or worse than others. Something to think about if I ever find myself betting on marble races I suppose!</p>
+</div>
 
 
 

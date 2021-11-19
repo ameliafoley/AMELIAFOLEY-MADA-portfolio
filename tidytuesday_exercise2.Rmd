@@ -63,7 +63,7 @@ clean <- clean %>% na.omit()
 
 clean$date <- lubridate::dmy(clean$date) #indate day month year format of input
 clean <- clean %>% mutate(date = lubridate::as_date(date)) #convert chr to date class
-class(test$date) #double check class conversion worked
+class(clean$date) #double check class conversion worked
 ```
 
 ## Explore the data
