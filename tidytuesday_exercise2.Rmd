@@ -4,5 +4,627 @@ output:
   html_document:
     toc: FALSE
 ---
+# Analyzing Marble Runs! 
 
-To be filled...
+## Load packages and data
+```{r}
+# Load packages
+library(tidyverse)
+library(knitr)
+library(here)
+library(dplyr)
+library(scales)
+library(ggthemes)
+library(ggplot2)
+library(tidymodels)
+library(vip)
+library(parsnip)
+library(recipes)
+library(magrittr)
+
+# Get the Data
+
+marbles <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-06-02/marbles.csv')
+
+# Take a look at data
+
+glimpse(marbles)
+```
+
+Here, we see that most of the variables seem appropriately classified as either a character or double. However, the date variable is saved as a character. We might want to convert this to the class date if we look at scores over time, etc. 
+
+There are also some variables that we can probably go ahead and elimiate from our clean dataset, which won't be informative for our analysis. These include the source and notes column. 
+
+We'll also want to look at missing variables. It looks like there could be some missing variables in the points column. Does that mean no points were acquired, or is the data truly missing? Should we remove the column, remove the missing observations, or assume that NA points = 0 points? 
+
+## Checking out missing values
+```{r}
+is.na(marbles) %>% summary()
+```
+
+There are some missing values in time and average lap time. It may be appropriate to remove these observations. There are substantial missing values for the pole and points variables. If we removed all of these observations, we would decrease our data set size by half. Plus, it looks like observations that have data for pole, are missing data for points, and vice versa. 
+
+However, these variables might be useful for analysis, so we might not want to get rid of them completely. 
+
+I'm not entirely sure how to interpret either the pole or the point information. I think that we can get the information that we need from the time_s and avg_time_lap columns to compare the marbles performance, though. So, we'll remove pole and point columns. 
+
+## Cleaning the data
+```{r}
+# Remove pole, point, source, and notes columns
+clean <- marbles %>% select(-"pole", 
+                            -"points", 
+                            -"source", 
+                            -"notes")
+glimpse(clean)
+is.na(clean) %>% summary()
+
+# Remove 3 observations with missing values for avg_lap_time and time_s
+clean <- clean %>% na.omit()
+
+clean$date <- lubridate::dmy(clean$date) #indate day month year format of input
+clean <- clean %>% mutate(date = lubridate::as_date(date)) #convert chr to date class
+class(test$date) #double check class conversion worked
+```
+
+## Explore the data
+```{r}
+summary(clean)
+```
+
+
+This summary tells us that we have records for marble performance throughout differences races (different dates). The races can occur at different sites, and each marble is also associated with a particular team. We know whether or not the marble was part of the hosting team, and we also have the average lap time for each marbles in a given race, as well as the total time a marble took to complete a race and the number of laps in a race. 
+
+We may need to do some pre-processing to determine some stats that allow us to compare model performance, since not all race lengths are the same. We might want to group by race and determine a marble's rank/place at finish by comparing the times, and we may also want to calculate the average race time for all marbles in a given race to understand whether a marble performs above or below average. 
+
+We also have average time per lap which could be a good comparison. But, lap lengths may differ based on site. We have the track lengths available, so we can calculate marble speed using average time per lap and track length in order to make these values comparable. 
+
+## Feature engineering/variable creation
+```{r}
+# calculate speed in m/s 
+clean <- clean %>% mutate(avg_speed = track_length_m/avg_time_lap)
+
+# calculate race rank
+clean <- clean %>% group_by(race) %>% mutate(rank = 
+                                               rank(time_s, 
+                                                    ties.method = "first")) # for simplicity we will assign ties to rank the first duplicate first
+
+# calculate total distance in meters of the race
+clean <- clean %>% mutate(dist = track_length_m*number_laps)
+```
+
+# Research questions
+Now that we have some more informative variables to work with, let's think about our key research questions. 
+
+ - Do some marbles inherently perform better than others? Do certain teams perform better than others? 
+ - How does speed change in longer races - increase or decrease? 
+ - Does the hosting team have an advantage - do "host" marbles more often win races than "visitor" marbles?
+ 
+These questions boil down to this:
+*outcome of interest*: rank, speed
+*predictors*: dist, host
+
+# EDA
+
+## Visualize with some figures
+
+### Average performance of individual marbles
+```{r}
+ggplot(clean, aes(marble_name, rank)) + geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
+```
+### Average performance of teams
+```{r}
+ggplot(clean, aes(team_name, rank)) + geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
+```
+### Total distance of race and average lap time
+```{r}
+ggplot(clean, aes(dist, avg_time_lap)) + geom_point()
+```
+### Host status and race performance
+```{r}
+ggplot(clean, aes(host, rank)) + geom_boxplot()
+```
+
+```{r}
+ggplot(clean, aes(date, rank , color = team_name)) + geom_line() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
+```
+
+My original thought was that this plot would let us see the average performance of each team over time, and visualize any patterns. However, this is too busy to be useful/informative. 
+
+### How does an marble team's performance change over time? 
+```{r}
+clean %>% filter(team_name == "Hornets") %>% ggplot(aes(date, rank)) + geom_line() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
+```
+
+### Does site location impact marble speed? Do different sites have different "difficulty" of track?
+```{r}
+ggplot(clean, aes(site, avg_speed)) + geom_col() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
+```
+
+
+# Modeling
+
+## Split into test and train
+```{r}
+# set seed for reproducible analysis (instead of random subset each time)
+set.seed(123)
+#subset 3/4 of data as training set
+data_split <- initial_split(clean, 
+                            prop = 7/10, 
+                            strata = "rank") #stratify by outcome of interest for balanced split
+                            
+
+#save sets as data frames
+train_data <- training(data_split)
+test_data <- testing(data_split)
+```
+
+## Set up cross validation
+```{r}
+#create folds (resample object)
+set.seed(123)
+folds <- vfold_cv(train_data, 
+                  v = 5, 
+                  repeats = 5,
+                  strata = "rank") #folds is set up to perform our CV
+
+```
+
+## Linear model
+```{r}
+#linear model set up
+lm_mod <- linear_reg() %>% 
+            set_engine('lm') %>% 
+            set_mode('regression')
+
+#create recipe for data and fitting and make dummy variables
+rank_rec <- recipe(rank ~ ., data = train_data) %>% 
+  step_dummy(all_nominal(),
+             -all_outcomes()) %>% step_zv(all_predictors()) %>% step_unknown()
+
+#create recipe for Lasso and elastic net that exclude character variables   
+train_data_2 <- train_data %>% select(-"date", 
+                                      -"race", 
+                                      -"site", 
+                                      -"marble_name", 
+                                      -"team_name", 
+                                      -"host"
+                                        )
+rank_rec_2 <- recipe(rank ~ ., data = train_data_2) %>% 
+  step_dummy(all_nominal(),
+             -all_outcomes()) %>% step_zv(all_predictors()) %>% step_unknown()
+
+#workflow set up
+rank_wflow <- 
+  workflow() %>% add_model(lm_mod) %>% add_recipe(rank_rec)
+
+#use workflow to prepare recipe and train model with predictors
+rank_fit <- 
+  rank_wflow %>% fit(data = train_data)
+
+#extract model coefficient
+rank_fit %>% extract_fit_parsnip() %>% tidy()
+```
+
+## Null model performance
+```{r}
+#recipe for null model
+null_train_rec <- recipe(rank ~ 1, data = train_data) #predicts mean of outcome
+
+#null model workflow incorporating null model recipe
+null_wflow <- workflow() %>% add_model(lm_mod) %>% add_recipe(null_train_rec)
+
+# I want to check and make sure that the null model worked as it was supposed to, so I want to view the predictions and make sure they are all the mean of the outcome
+#get fit for train data using null workflow
+nullfittest <- null_wflow %>% fit(data = train_data)
+#get predictions based on null model
+prediction <- predict(nullfittest, train_data)
+test_pred <- predict(nullfittest, test_data)
+#the predictions for the train and test data are all the same mean value, so this tells us the null model was set up properly
+
+#Now, we'll use fit_resamples based on the tidymodels tutorial for CV/resampling (https://www.tidymodels.org/start/resampling/)
+#fit model with training data
+null_fit_train <- fit_resamples(null_wflow, resamples = folds)
+
+#get results
+metrics_null_train <- collect_metrics(null_fit_train)
+#RMSE for null train fit is 4.492
+
+#repeat for test data
+null_test_rec <- recipe(rank ~ 1, data = test_data) #predicts mean of outcome
+null_test_wflow <- workflow() %>% add_model(lm_mod) %>% add_recipe(null_test_rec) #sets workflow with new test recipe
+null_fit_test <- fit_resamples(null_test_wflow, resamples = folds) #performs fit
+metrics_null_test <- collect_metrics(null_fit_test) #gets fit metrics
+#RMSE for null test fit is 4.492
+```
+
+## Decision tree
+```{r}
+#going based off of tidymodels tutorial: tune parameters
+#since we already split our data into test and train sets, we'll continue to use those here. they are `train_data` and `test_data`
+
+#model specification
+tune_spec <- 
+  decision_tree(
+    cost_complexity = tune(),
+    tree_depth = tune()
+  ) %>% 
+  set_engine("rpart") %>% 
+  set_mode("regression")
+tune_spec
+
+#tuning grid specification
+tree_grid <- grid_regular(cost_complexity(),
+                          tree_depth(),
+                          levels = 5)
+tree_grid
+
+#cross validation
+set.seed(123)
+cell_folds <- vfold_cv(train_data, v = 5, repeats = 5, strata = 'rank')
+
+#workflow
+set.seed(123)
+
+tree_wf <- workflow() %>%
+  add_model(tune_spec) %>%
+  add_recipe(rank_rec)
+
+#model tuning with `tune_grid()`
+tree_res <- 
+  tree_wf %>% 
+  tune_grid(
+    resamples = cell_folds,
+    grid = tree_grid
+    )
+tree_res %>% collect_metrics()
+#Here we see 25 candidate models, and the RMSE and Rsq for each
+tree_res %>% autoplot() #view plot
+
+#select the best decision tree model
+best_tree <- tree_res %>% select_best("rmse")
+best_tree #view model details
+
+#finalize model workflow with best model
+tree_final_wf <- tree_wf %>%
+  finalize_workflow(best_tree) 
+
+#fit model
+tree_fit <- 
+  tree_final_wf %>% fit(train_data)
+```
+
+### Decision tree plots
+```{r}
+#diagnostics
+autoplot(tree_res)
+#calculate residuals
+tree_resid <- tree_fit %>%
+  augment(train_data) %>% #this will add predictions to our df
+  select(.pred, rank) %>%
+  mutate(.resid = rank - .pred) #manually calculate residuals
+
+#model predictions from tuned model vs actual outcomes
+tree_pred_plot <- ggplot(tree_resid, aes(x = rank, y = .pred)) + geom_point() + 
+  labs(title = "Predictions vs Actual Outcomes: Decision Tree", x = "Rank Outcome", y = "Rank Prediction")
+tree_pred_plot
+
+#plot residuals vs predictions
+tree_resid_plot <- ggplot(tree_resid, aes(y = .resid, x = .pred)) + geom_point() + 
+  labs(title = "Predictions vs Residuals: Decision Tree", x = "Rank Prediction", y = "Residuals")
+tree_resid_plot #view plot
+
+#compare to null model
+metrics_null_train #view null RMSE for train data
+tree_res %>% show_best(n=1) #view RMSE for best decision tree model
+```
+
+Our best decision tree model has a RMSE of 4.115, which is better than the null RMSE of 4.492. Our predictions vs outcomes plots also shows the typical diagonal trend that you want to see, but the points are definitely dispersed and concentrated along the 45 degree line, indicating that the predicitions are not *super* accurate. 
+
+## LASSO model
+```{r}
+#based on tidymodels tutorial: case study 
+
+#(Error: not compatible with requested type = character, target = double). I keep getting this error for the lasso model, and after troubleshooting for a few hours, I am lost on what to do. I am pretty sure my character varaibles should be managed by the step_dummy() step in the initial rank_rec recipe, but the models continue to fail. I am not sure what other part of the equation would be considered a character that needs to be converted to numeric.
+#For now, I will create a new recipe that does not include any character variables. This is not ideal because our model won't reflect patterns related to marble identity, or to host status. 
+
+
+#model specification (mixture = 1 means using LASSO)
+lasso <- linear_reg() %>%
+  set_mode("regression") %>%           
+  set_engine("glmnet") %>%
+  set_args(penalty = tune(), mixture = 1)
+
+#set workflow
+lasso_wf <- workflow() %>% add_model(lasso) %>% add_recipe(rank_rec_2)
+
+#tuning grid specification
+lasso_grid <- tibble(penalty = 10^seq(-3, 0, length.out = 30))
+
+#use function from (https://stackoverflow.com/questions/64519640/error-in-summary-connectionconnection-invalid-connection) to turn of parallel processing that might be causing our error message (Error: All of the models failed. See the .notes column)
+unregister_dopar <- function() {
+  env <- foreach:::.foreachGlobals
+  rm(list=ls(name=env), pos=env)
+}
+unregister_dopar()
+#tuning with CV and tune_grid
+
+lasso_res <- lasso_wf %>% tune_grid(resamples = folds, 
+                                    grid = lasso_grid, 
+                                    control = control_grid(save_pred = TRUE, verbose = TRUE), 
+                                    metrics = metric_set(rmse))
+#view model metrics
+lasso_res %>% collect_metrics()
+
+#select top models
+top_lasso <- 
+  lasso_res %>% show_best("rmse") %>% arrange(penalty)
+top_lasso #view
+
+#see best lasso
+best_lasso <- lasso_res %>% select_best()
+best_lasso #view
+
+#finalize workflow with top model
+lasso_final_wf <- lasso_wf %>% finalize_workflow(best_lasso)
+
+#fit model with finalized WF
+lasso_fit <- lasso_final_wf %>% fit(train_data)
+
+#compare results
+metrics_null_train #view null RMSE for train data
+lasso_res %>% show_best(n=1) #view RMSE for best decision tree model
+```
+ 
+  
+
+### LASSO plots
+```{r}
+#diagnostics
+autoplot(lasso_res)
+#calculate residuals
+lasso_resid <- lasso_fit %>%
+  augment(train_data) %>% #this will add predictions to our df
+  select(.pred, rank) %>%
+  mutate(.resid = rank - .pred) #manually calculate residuals
+
+#model predictions from tuned model vs actual outcomes
+lasso_pred_plot <- ggplot(lasso_resid, aes(x = rank, y = .pred)) + geom_point() + 
+  labs(title = "Predictions vs Actual Outcomes: LASSO", x = "Rank Outcome", y = "Rank Prediction")
+lasso_pred_plot
+
+
+#plot residuals vs predictions
+lasso_resid_plot <- ggplot(lasso_resid, aes(y = .resid, x = .pred)) + geom_point() + 
+  labs(title = "Predictions vs Residuals: LASSO", x = "Rank Prediction", y = "Residuals")
+lasso_resid_plot #view plot
+
+#compare to null model
+metrics_null_train #view null RMSE for train data
+lasso_res %>% show_best(n=1) #view RMSE for best lasso model
+```
+
+The best lasso plot has an RMSE of 1.86, which is definitely better than both the null model and the decision tree model.The outcomes vs prediction plot looks neat as well, it looks better compared to the decision tree model. 
+
+## Random forest
+```{r}
+#based on tidymodels tutorial: case study
+library(parallel)
+cores <- parallel::detectCores()
+cores
+#return to original linear model recipe
+rank_rec <- recipe(rank ~ ., data = train_data) %>% 
+  step_dummy(all_nominal())
+#model specification
+r_forest <- rand_forest(mtry = tune(), min_n = tune(), trees = tune()) %>% set_engine("ranger", num.threads = cores, importance = "permutation") %>% set_mode("regression")
+
+#set workflow
+r_forest_wf <- workflow() %>% add_model(r_forest) %>% add_recipe(rank_rec)
+
+#tuning grid specification
+rf_grid  <- expand.grid(mtry = c(3, 4, 5, 6), min_n = c(40,50,60), trees = c(500,1000)  )
+#what we will tune:
+r_forest %>% parameters()
+
+#tuning with CV and tune_grid
+
+r_forest_res <- 
+  r_forest_wf %>%
+  tune_grid(resamples = cell_folds, 
+            grid = rf_grid, 
+            control = control_grid(save_pred = TRUE), 
+            metrics = metric_set(rmse))
+
+#view top models
+r_forest_res %>% show_best(metric = "rmse")
+
+#view plot of models performance
+autoplot(r_forest_res)
+
+#select best model
+rf_best <- r_forest_res %>% select_best(metric = "rmse")
+rf_best
+
+#finalize workflow with top model
+rf_final_wf <- r_forest_wf %>% finalize_workflow(rf_best)
+
+#fit model with finalized WF
+rf_fit <- rf_final_wf %>% fit(train_data)
+```
+
+### Random forest plots
+```{r}
+#diagnostics
+autoplot(r_forest_res)
+#calculate residuals
+rf_resid <- rf_fit %>%
+  augment(train_data) %>% #this will add predictions to our df
+  select(.pred, rank) %>%
+  mutate(.resid = rank - .pred) #manually calculate residuals
+
+#model predictions from tuned model vs actual outcomes
+rf_pred_plot <- ggplot(rf_resid, aes(x = rank, y = .pred)) + geom_point() + 
+  labs(title = "Predictions vs Actual Outcomes: Random Forest", x = "Rank Outcome", y = "Rank Prediction")
+rf_pred_plot
+
+
+#plot residuals vs predictions
+rf_resid_plot <- ggplot(rf_resid, aes(y = .resid, x = .pred)) + geom_point() + 
+  labs(title = "Predictions vs Actual Outcomes: Random Forest", x = "Rank Prediction", y = "Residuals")
+rf_resid_plot #view plot
+
+#compare to null model
+metrics_null_train #view null RMSE for train data
+r_forest_res %>% show_best(n=1) #view RMSE for best decision tree model
+```
+
+Here, we see that the best random forest model has an RMSE of 4.06, and the plot of predictions vs outcomes follows the ideal digonal line - it also looks a little cleaner than the decision tree did. Similarly, the random forest RMSE is better than the decision tree RMSE (4.06 compares to 4.115) - but this is not a huge difference. 
+
+## Elastic net
+```{r}
+#based on this tutorial: (https://www.kaggle.com/issactoast/elastic-net-tunning-with-tidymodels)
+
+#elastic net model specification/tuning specification
+tune_spec <- linear_reg(penalty = tune(),
+                        mixture = tune()) %>%
+  set_engine("glmnet")
+
+param_grid <- grid_regular(penalty(), 
+                            mixture(),
+                            levels = list(penalty = 100,
+                                          mixture = 10))
+
+#set workflow
+net_workflow <- workflow() %>%
+  add_model(tune_spec) %>% 
+  add_recipe(rank_rec_2)
+
+
+#tuning with CV and tune_grid
+library(tictoc)
+
+
+tic()
+tune_result <- net_workflow %>% 
+  tune_grid(folds,
+            grid = param_grid,
+            metrics = metric_set(rmse))
+toc()
+
+tune_result %>% collect_metrics()
+
+#view top models
+tune_result %>% show_best(metric = "rmse")
+
+#view plot of models performance
+autoplot(tune_result)
+
+#select best model
+net_best <- tune_result %>% select_best(metric = "rmse")
+net_best
+
+#finalize workflow with top model
+net_final_wf <- net_workflow %>% finalize_workflow(net_best)
+
+#fit model with finalized WF
+net_fit <- net_final_wf %>% fit(train_data)
+```
+
+### Elastic net plots
+```{r}
+#diagnostics
+autoplot(tune_result)
+#calculate residuals
+net_resid <- net_fit %>%
+  augment(train_data) %>% #this will add predictions to our df
+  select(.pred, rank) %>%
+  mutate(.resid = rank - .pred) #manually calculate residuals
+
+#model predictions from tuned model vs actual outcomes
+net_pred_plot <- ggplot(net_resid, aes(x = rank, y = .pred)) + geom_point() + 
+  labs(title = "Predictions vs Actual Outcomes: Elastic Net", x = "Rank Outcome", y = "Rank Prediction")
+net_pred_plot
+
+
+#plot residuals vs predictions
+net_resid_plot <- ggplot(net_resid, aes(y = .resid, x = .pred)) + geom_point() + 
+  labs(title = "Predictions vs Actual Outcomes: Elastic Net", x = "Rank Prediction", y = "Residuals")
+net_resid_plot #view plot
+
+#compare to null model
+metrics_null_train #view null RMSE for train data
+tune_result %>% show_best(n=1) #view RMSE for best decision tree model
+```
+
+
+Here, we see a decent looking outcomes vs prediction plot. The RMSE for the best elastic net model is 1.84. So far, this is technically the best RMSE, since it is lower that the RMSE for the decision tree, lasso, and random forest models. However, we have to consider that there are fewer variables included in the lasso and elastic net models, since there were continual error messages about passing character variables through the model despite the use of the step_dummy() function to convert nominal variables into multiple seperate variables with binary outcomes.
+
+The more informative models might be the decision tree and random forest models, since they include qualitative predictions like team, individual marble, and host status. The lasso and elastic net models only include quantitative predictors such as number of laps, avg time per lap, speed, etc. While these could be informative to determine rank post-race, they wouldn't be very predictive of marble performance pre-race (in an instance where you want to "bet" on a certain outcome, etc.)
+
+The *random forest* model has a better RMSE than the decision tree, so that will be the model we select as the best in this case. 
+
+## Evaluate selected model with *test* data
+```{r}
+#We've selected the random forest model. Let's evaluate it with the test data. 
+
+#fit to test data
+last_rf_fit <- rf_final_wf %>% last_fit(data_split)
+last_rf_fit %>% collect_metrics()
+```
+
+By using the `last_fit()` function, we can see that the RMSE for the model run on the test data is 4.00, which is just as good (actually slightly better) than the RMSE for the random forest model intially built with the train data. This indicates decent model performance. Now, let's look at some diagnostic plots. 
+
+## Final model diagnostics/plots
+```{r}
+#calculate residuals
+final_resid <- last_rf_fit %>%
+  augment() %>% #this will add predictions to our df
+  select(.pred, rank) %>%
+  mutate(.resid = rank - .pred) #manually calculate residuals
+
+#model predictions from tuned model vs actual outcomes
+final_pred_plot <- ggplot(final_resid, aes(x = rank, y = .pred)) + geom_point() + 
+  labs(title = "Predictions vs Actual Outcomes: Random Forest", x = "Rank Outcome", y = "Rank Prediction")
+final_pred_plot
+
+
+#plot residuals vs predictions
+final_resid_plot <- ggplot(final_resid, aes(y = .resid, x = .pred)) + geom_point() + 
+  labs(title = "Predictions vs Residuals: Random Forest", x = "Residuals", y = "Rank Prediction")
+final_resid_plot #view plot
+
+#compare to null model
+metrics_null_train #view null RMSE for train data
+last_rf_fit %>% collect_metrics() #view RMSE for final model
+```
+
+In the outcomes vs predictions plot for the final random forest fit, we see a general diagnoal trend in the plot, though this indicates our predictions are not great. However, I think that the random forest model is decent, with an improved RMSE (4.0) from the null model RMSE (4.6). 
+
+Finally, let's visualize variable importance scores using the `vip` package to see which predictors are most indicative of marble performance, measured via rank. 
+
+### Variable importance for final random forest model
+```{r}
+library(parsnip)
+last_rf_fit %>% 
+  purrr::pluck(".workflow", 1) %>%   
+  workflows::extract_fit_parsnip() %>% 
+  vip(num_features = 20)
+
+```
+
+Here, we have a visual representation of our model, ranking the variables with the biggest impact on our key outocme, rank, which measures marble performance. Some interesting things to note are that the team Hazers, the marbles Smoggy, Sublime, Prim, and Mary had "consistent" enough performances that the identity of the marbles themselves seem to be somewhat predictive of performance, though the most important predictor variable is average speed, which is to be expected. 
+
+# Discussion
+In this assignment, I began by checking out the marble dataset. I saw that there were both character variables and numeric variables, some useful and some not. I cleaned the data by removed variables with too many missing values, such as “pole” and “notes” as well as variables that were not informative, such as “source” which just contained linked to the Youtube videos of the marble races. 
+
+Then, I realized that I would need to do some feature engineering/variable creation to give me some comparable metrics for marble performance, such as average total speed and rank (place at race finish). After doing that, I formulated my research questions, which related to whether some marbles inherently perform better than others, and how factors such as host status impact marble performance. My main outcomes of interest then became rank and speed, with main predictors being distance and host status. 
+
+In the EDA, I looked at box plots of individual marble performance, as well as team performance. It seemed that some marbles _did_ have a tendency to rank lower or higher than others. It appeared that there was not a relationship between total race distance and lap time, and a box plot comparison of host status and rank performance showed that there may be a slight correlation between host status and race performance (non-hosts tended to finish with better ranks (lower = better). I also attempted to check out marble team performance trends over time throughout the qualifying races, but ended up with a busy plot that was not too informative. I created a few more EDA plots but continued on to modeling with the key question of which predictors impact final rank. 
+
+I began with the null model, which had an RMSE of 4.49. I built four models in total: decision tree (RMSE = 4.115), lasso (RMSE = 1.86), random forest (RMSE = 4.06), and elastic net (RMSE = 1.84). However, I encountered issues with the lasso and elastic net models, containing to get an error message (Error: not compatible with requested type = character, target = double). I spent a good bit of time troubleshooting and was unsure of the problem (I used step_dummy() to convert nominal variables to usable variables for modeling, so I wasn’t sure what other component was a character that would mess with the model). Ultimately, I created a new dataset with the character variables removed. This is not ideal because it relies only on numeric variables which are mostly available post-race, and not pre-race, meaning they would not be very applicable to predicting marble performance in reality. 
+
+For this reason, I selected the the random forest model, which includes some nominal predictors - I think this makes the model more useful. After running the selected model on the test data and getting decent results, I examined variable importance and saw some interesting patterns: average speed, total time, and avg_time_lap where very important predictors, but there were also several teams and individual marbles that were important in predicting outcomes. So, I think this somewhat answers my initial research question of if individual marbles inherently perform better or worse than others. Something to think about if I ever find myself betting on marble races I suppose! 
